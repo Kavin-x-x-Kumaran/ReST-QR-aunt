@@ -1,8 +1,7 @@
 from django.urls import path, include
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
-from .routers import *
-from .views import *
+from .routers import auth_router
 
 urlpatterns = [
     path('', include(auth_router.urls)),
