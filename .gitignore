@@ -1,2 +1,2 @@
-.env
 passwords.txt
+__pycache__/
