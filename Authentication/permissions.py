@@ -9,5 +9,4 @@ class IsSuperUser(BasePermission):
             request.user.is_authenticated and
             request.user.is_staff and
             request.user.is_superuser
-        )
-    
+        )   

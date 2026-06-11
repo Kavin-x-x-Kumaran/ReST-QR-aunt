@@ -1,17 +1,27 @@
 from rest_framework.serializers import ModelSerializer
+
 from .models import User
 
-class UserSerializer(ModelSerializer):
 
+class UserSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = ["id", "password", "email", "first_name", "last_name", "is_staff", "is_active", "date_joined"]
+        fields = [
+            "id",
+            "password",
+            "email",
+            "first_name",
+            "last_name",
+            "is_staff",
+            "is_active",
+            "date_joined"
+        ]
 
         extra_kwargs = {
-            "password": {"write_only": True}
+            "password": {"write_only": True},
         }
 
-    def create(self, validated_data):
+    def create(self, validated_data):    
         password = validated_data.pop("password")
 
         user = User(**validated_data)
@@ -19,7 +29,7 @@ class UserSerializer(ModelSerializer):
         user.save()
 
         return user
-    
+            
     def update(self, instance, validated_data):
         password = validated_data.pop("password", None)
 
