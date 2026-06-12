@@ -22,6 +22,9 @@ load_dotenv(BASE_DIR / ".env")
 
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 
+if SECRET_KEY is None:
+    raise ValueError("DJANGO_SECRET_KEY environment variable is not set")
+
 DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 
 ALLOWED_HOSTS = eval(os.getenv("ALLOWED_HOSTS", []))
@@ -110,8 +113,8 @@ AUTH_USER_MODEL = "Authentication.User"
 # JWT
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
 }
 
