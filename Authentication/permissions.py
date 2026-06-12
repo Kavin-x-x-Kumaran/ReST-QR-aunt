@@ -1,5 +1,5 @@
 """
-Permission for Authentication.
+Permission for authentication.
 
 Provides permission classes restricted to superusers.
 """

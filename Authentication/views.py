@@ -1,5 +1,5 @@
 """
-Views for Authentication.
+Views for authentication.
 
 Provides views for accommodating HTTP requests.
 """

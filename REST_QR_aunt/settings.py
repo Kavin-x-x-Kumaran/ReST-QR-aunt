@@ -33,7 +33,8 @@ ALLOWED_HOSTS = eval(os.getenv("ALLOWED_HOSTS", []))
 # Application definition
 
 INSTALLED_APPS = [
-    "Authentication.apps.AuthenticationConfig",
+    "authentication",
+    "dining_table",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -107,7 +108,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTH_USER_MODEL = "Authentication.User"
+AUTH_USER_MODEL = "authentication.User"
 
 
 # JWT

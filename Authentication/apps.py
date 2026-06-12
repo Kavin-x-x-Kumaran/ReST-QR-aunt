@@ -1,5 +1,5 @@
 """
-Authentication App configuration.
+Authentication app configuration.
 
 Provides serializers, views, permissions, and models for user authentication.
 """
@@ -7,6 +7,6 @@ from django.apps import AppConfig
 
 
 class AuthenticationConfig(AppConfig):
-    """Configures Authentication app."""
+    """Configures authentication app."""
     
-    name = 'Authentication'
+    name = 'authentication'

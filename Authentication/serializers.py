@@ -1,5 +1,5 @@
 """
-Serializers for Authentication.
+Serializers for authentication.
 
 Provides serializers for user authentication.
 """
