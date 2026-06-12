@@ -7,7 +7,7 @@ Provides permission classes restricting GET, POST, DELETE to superusers.
 from rest_framework.permissions import BasePermission
 
 
-class IsSuperUser(BasePermission):
+class IsAllowedAccess(BasePermission):
     """Allows only superusers to GET, POST or DELETE."""
 
     def has_permission(self, request, view):
