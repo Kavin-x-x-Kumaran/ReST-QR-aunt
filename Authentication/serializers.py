@@ -1,9 +1,17 @@
+"""
+Serializers for Authentication.
+
+Provides serializers for user authentication.
+"""
+
 from rest_framework.serializers import ModelSerializer
 
 from .models import User
 
 
 class UserSerializer(ModelSerializer):
+    """Serializer for User objects."""
+
     class Meta:
         model = User
         fields = [
@@ -21,7 +29,8 @@ class UserSerializer(ModelSerializer):
             "password": {"write_only": True},
         }
 
-    def create(self, validated_data):    
+    def create(self, validated_data):
+        """Create a user with hashed password."""
         password = validated_data.pop("password")
 
         user = User(**validated_data)
@@ -31,6 +40,7 @@ class UserSerializer(ModelSerializer):
         return user
             
     def update(self, instance, validated_data):
+        """Update a user and hash the password if provided."""
         password = validated_data.pop("password", None)
 
         for attr, value in validated_data.items():
@@ -41,3 +51,4 @@ class UserSerializer(ModelSerializer):
 
         instance.save()
         return instance
+    
