@@ -9,6 +9,7 @@ from .views import BillView
 
 urlpatterns = [
     path("", include(table_router.urls)),
-    path("<int:table_id>/bills/", BillView.as_view()),  # For get, patch, post
-    path("bills/<int:bill_id>/", BillView.as_view()),  # For delete, get (admin only)
+    path("tables/<int:table_id>/bills/", BillView.as_view()),  # For get, patch, post
+    path("bills/", BillView.as_view()),
+    path("bills/<int:bill_id>/", BillView.as_view()),   # For delete, get (admin only)
 ]

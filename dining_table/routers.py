@@ -9,4 +9,4 @@ from rest_framework.routers import DefaultRouter
 from .views import TableView
 
 table_router = DefaultRouter()
-table_router.register(r"user", TableView)
+table_router.register(r"tables", TableView)

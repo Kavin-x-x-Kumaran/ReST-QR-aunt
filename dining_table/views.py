@@ -9,7 +9,6 @@ from rest_framework import status
 from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
-from django.utils import timezone
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
@@ -39,27 +38,34 @@ class BillView(APIView):
         """
         Function to GET bills associated with the given table.
         """
-        if table_id is None:
-            if bill_id is None:
-                raise Http404("No bill_id mentioned.")
-            else:
-                authorised = (
-                    request.user
-                    and request.user.is_authenticated
-                    and request.user.is_staff
-                    and request.user.is_superuser
-                )
-                if authorised:
-                    bill = get_object_or_404(Bill, pk=bill_id)
-                    bill_data = BillSerializer(bill).data
-                    return Response(bill_data)
-                else:
-                    raise PermissionDenied("Only admin can perform this action.")
-        else:
+        if table_id is not None:
+            # If table_id is present
             table = get_object_or_404(Table, pk=table_id)
             bill = table.bills.filter(active=True).first()
             if bill is None:
                 raise Http404("No active bill exists for this table.")
+            bill_data = BillSerializer(bill).data
+            return Response(bill_data)
+        # If table_id is absent
+        authorised = (
+            request.user
+            and request.user.is_authenticated
+            and request.user.is_staff
+            and request.user.is_superuser
+        )
+        if not authorised:
+            # If table_id is absent and the user is not a superuser
+            raise PermissionDenied("Only admin can perform this action.")
+        if bill_id is None:
+            # If bill_id and table_id are absent and the user is a superuser
+            print("hi")
+            all_bills = Bill.objects.all()
+            all_bills_data = BillSerializer(all_bills, many=True).data
+            return Response(all_bills_data)
+        else:
+            # If table_id is absent but bill_id is present and the user is a superuser
+            print("hello")
+            bill = get_object_or_404(Bill, pk=bill_id)
             bill_data = BillSerializer(bill).data
             return Response(bill_data)
 
@@ -73,7 +79,7 @@ class BillView(APIView):
                 "No bill created. There already exists a bill at this table. Contact admin."
             )
 
-        new_bill = Bill(table=table, date=timezone.now(), active=True)
+        new_bill = Bill(table=table, active=True)
         new_bill.save()
         new_bill_data = BillSerializer(new_bill).data
         return Response(new_bill_data, status=status.HTTP_201_CREATED)
