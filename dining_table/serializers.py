@@ -6,7 +6,7 @@ Provides serializers for dining_table.
 
 from rest_framework.serializers import ModelSerializer
 
-from .models import Table
+from .models import Bill, Table
 
 class TableSerializer(ModelSerializer):
     """Serializer for Table objects."""
@@ -14,3 +14,11 @@ class TableSerializer(ModelSerializer):
     class Meta:
         model = Table
         fields = ["id", "occupied", "status"]
+
+
+class BillSerializer(ModelSerializer):
+    """Serializer for Bill objects."""
+
+    class Meta:
+        model = Bill
+        fields = ["id", "table", "date"]

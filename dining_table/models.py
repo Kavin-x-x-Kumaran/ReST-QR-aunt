@@ -6,8 +6,6 @@ Provides Table and Bill classes.
 
 from django.db import models
 
-#from order.models import Order
-
 
 class Table(models.Model):
     """Represents a dining table which seats customers."""
@@ -26,14 +24,13 @@ class Table(models.Model):
         return f"Table no. {self.pk}"
 
 
-#class Bill(models.Model):
-#    """Represents a bill generated in a visit."""
-#
-#    table = models.ForeignKey(Table, on_delete=models.DO_NOTHING)
-#    order = models.ForeignKey(Order, on_delete=models.DO_NOTHING)
-#    date = models.DateTimeField(auto_now_add=True)
-#   
-#   def __str__(self):
-#       """Return a human-readable identifier."""
-#       return f"Bill no. {self.pk} from {self.date}"
-    
+class Bill(models.Model):
+    """Represents a bill generated in a visit."""
+
+    table = models.ForeignKey(Table, on_delete=models.DO_NOTHING, related_name='bills')
+    active =models.BooleanField(default=True)
+    date = models.DateTimeField(auto_now_add=True)
+   
+    def __str__(self):
+       """Return a human-readable identifier."""
+       return f"Bill no. {self.pk} from {self.date}"
