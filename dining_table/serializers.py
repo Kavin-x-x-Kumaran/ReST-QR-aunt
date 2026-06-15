@@ -1,12 +1,13 @@
 """
 Serializers for dining_table.
 
-Provides serializers for dining_table.
+Provides serializers for Bill and Table.
 """
 
 from rest_framework.serializers import ModelSerializer
 
 from .models import Bill, Table
+
 
 class TableSerializer(ModelSerializer):
     """Serializer for Table objects."""
