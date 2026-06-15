@@ -35,6 +35,7 @@ ALLOWED_HOSTS = eval(os.getenv("ALLOWED_HOSTS", []))
 INSTALLED_APPS = [
     "authentication",
     "dining_table",
+    "menu",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
