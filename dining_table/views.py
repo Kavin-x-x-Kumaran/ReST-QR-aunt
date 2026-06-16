@@ -36,7 +36,11 @@ class BillView(APIView):
 
     def get(self, request, table_id=None, bill_id=None):
         """
-        Function to GET bills associated with the given table.
+        - Returns active bill of the mentioned table.
+        - Raises HTTP 403 if table_id is absent and user is not a superuser.
+        - Raises HTTP 404 if the entered bill_id is not found.
+        - Returns the mentioned bill_id if the user is a superuser and table_id is absent.
+        - Returns all bills if the user is a superuser and both table_id and bill_id are absent.
         """
         if table_id is not None:
             # If table_id is present
@@ -86,7 +90,7 @@ class BillView(APIView):
 
     def patch(self, request, table_id):
         """
-        Function to update the active bill of the given table.
+        Updates the active bill of the given table and returns updated bill data.
         """
         table = get_object_or_404(Table, pk=table_id)
         bill = table.bills.filter(active=True).order_by("-date").first()
@@ -101,6 +105,9 @@ class BillView(APIView):
         return Response(update_bill.data)
 
     def delete(self, request, bill_id):
+        """
+        Deletes the mentioned bill_id.
+        """
         authorised = (
             request.user
             and request.user.is_authenticated
