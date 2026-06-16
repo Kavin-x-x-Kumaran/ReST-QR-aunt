@@ -5,9 +5,10 @@ Provides views for accommodating HTTP requests.
 """
 
 from rest_framework import generics
+from rest_framework.permissions import IsAdminUser
 
 from .models import Category, Item
-from .permissions import IsStaff, IsSuperUser
+from .permissions import IsSuperUser
 from .serializers import AvailabilitySerializer, CategorySerializer, ItemSerializer
 
 
@@ -48,7 +49,7 @@ class ItemStaffView(generics.UpdateAPIView):
 
     queryset = Item.objects.all()
     serializer_class = AvailabilitySerializer
-    permission_classes = [IsStaff]
+    permission_classes = [IsAdminUser]
 
 
 class ItemAdminView(generics.ListCreateAPIView, generics.RetrieveUpdateDestroyAPIView):

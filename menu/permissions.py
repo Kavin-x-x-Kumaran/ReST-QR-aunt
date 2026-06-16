@@ -18,15 +18,3 @@ class IsSuperUser(BasePermission):
             and request.user.is_staff
             and request.user.is_superuser
         )
-
-
-class IsStaff(BasePermission):
-    """Permission class for staff."""
-
-    def has_permission(self, request, view):
-        """Returns True if the user is a staff."""
-        return (
-            request.user
-            and request.user.is_authenticated
-            and request.user.is_staff
-        )
