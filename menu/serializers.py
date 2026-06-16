@@ -6,7 +6,7 @@ Provides serializers for Category and Item.
 
 from rest_framework.serializers import ModelSerializer
 
-from .models import Category
+from .models import Category, Item
 
 
 class CategorySerializer(ModelSerializer):
@@ -15,3 +15,27 @@ class CategorySerializer(ModelSerializer):
     class Meta:
         model = Category
         fields = ["id", "name"]
+
+
+class ItemSerializer(ModelSerializer):
+    """Serializer for Item objects."""
+
+    class Meta:
+        model = Item
+        fields = [
+            "id",
+            "category",
+            "name",
+            "description",
+            "price",
+            "preparation_minutes",
+            "availability"
+        ]
+
+
+class AvailabilitySerializer(ModelSerializer):
+    """Serializer for availability field of Item objects."""
+
+    class Meta:
+        model = Item
+        fields = ["id", "availability"]
