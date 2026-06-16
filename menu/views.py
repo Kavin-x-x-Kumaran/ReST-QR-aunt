@@ -11,7 +11,7 @@ from .permissions import IsStaff, IsSuperUser
 from .serializers import AvailabilitySerializer, CategorySerializer, ItemSerializer
 
 
-class CategoryListView(generics.ListAPIView):
+class CategoryListView(generics.ListCreateAPIView, generics.RetrieveAPIView):
     """View which permits all users to view the list of categories."""
 
     queryset = Category.objects.all()
@@ -36,7 +36,7 @@ class CategoryAdminView(
     permission_classes = [IsSuperUser]
 
 
-class ItemListView(generics.ListAPIView):
+class ItemListView(generics.ListAPIView, generics.RetrieveAPIView):
     """View which permits all users to view the list of items."""
 
     queryset = Item.objects.all()
