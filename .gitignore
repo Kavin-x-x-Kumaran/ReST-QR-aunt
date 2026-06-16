@@ -35,4 +35,5 @@ passwords.txt
 # The following are personal-use files and are irrelevant to the project's functionality
 to-do.md
 API_endpoints.txt
+API_endpoints.md
 db_structure.txt
