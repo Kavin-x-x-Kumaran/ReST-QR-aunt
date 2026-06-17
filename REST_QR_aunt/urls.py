@@ -22,4 +22,5 @@ urlpatterns = [
     path('auth/', include('authentication.urls')),
     path('', include('dining_table.urls')),
     path('menu/', include('menu.urls')),
+    path('', include('order.urls')),
 ]

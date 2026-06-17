@@ -116,6 +116,6 @@ class BillView(APIView):
         if authorised:
             bill = get_object_or_404(Bill, pk=bill_id)
             bill.delete()
-            return Response({"detail": "Bill deleted successfully."})
+            return Response(status=status.HTTP_204)
         else:
             raise PermissionDenied("Only admin can perform this action.")
