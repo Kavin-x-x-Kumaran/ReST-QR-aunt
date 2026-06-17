@@ -19,9 +19,9 @@ from .serializers import BillSerializer, TableSerializer
 
 class TableView(ModelViewSet):
     """
-    Viewset for managing users.
+    Viewset for managing tables.
 
-    Restricts access to superusers.
+    Restricts access to based on IsAllowedAccess permission class.
     """
 
     queryset = Table.objects.all()
@@ -62,7 +62,6 @@ class BillView(APIView):
             raise PermissionDenied("Only admin can perform this action.")
         if bill_id is None:
             # If bill_id and table_id are absent and the user is a superuser
-            print("hi")
             all_bills = Bill.objects.all()
             all_bills_data = BillSerializer(all_bills, many=True).data
             return Response(all_bills_data)
