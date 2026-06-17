@@ -47,7 +47,7 @@ class BillView(APIView):
             table = get_object_or_404(Table, pk=table_id)
             bill = table.bills.filter(active=True).first()
             if bill is None:
-                raise Http404("No active bill exists for this table.")
+                raise Http404("No active bill exists for this table. Contact staff.")
             bill_data = BillSerializer(bill).data
             return Response(bill_data)
         # If table_id is absent
@@ -79,7 +79,7 @@ class BillView(APIView):
         table = get_object_or_404(Table, pk=table_id)
         if table.bills.filter(active=True).exists():
             raise ValidationError(
-                "No bill created. There already exists a bill at this table. Contact admin."
+                "No bill created. There already exists a bill at this table. Contact staff."
             )
 
         new_bill = Bill(table=table, active=True)
