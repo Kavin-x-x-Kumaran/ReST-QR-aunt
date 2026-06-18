@@ -1,5 +1,5 @@
 """
-Permission for dining.
+Permissions involved in dining.
 
 Provides permission classes restricting GET, POST, DELETE to superusers.
 """
