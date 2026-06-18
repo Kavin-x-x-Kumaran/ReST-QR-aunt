@@ -31,46 +31,61 @@ class TableView(ModelViewSet):
 
 class BillView(APIView):
     """
-    View for getting bills.
+    View for accessing bills.
     """
 
     def get(self, request, table_id=None, bill_id=None):
         """
-        - Returns active bill of the mentioned table.
-        - Raises HTTP 403 if table_id is absent and user is not a superuser.
-        - Raises HTTP 404 if the entered bill_id is not found.
-        - Returns the mentioned bill_id if the user is a superuser and table_id is absent.
-        - Returns all bills if the user is a superuser and both table_id and bill_id are absent.
+        - If bill_id is present:
+            > If user is not a superuser: Raises HTTP 403
+            > If user is a superuser: Returns the requested bill.
+        - If bill_id is absent and table_id is present:
+            > If user is not a superuser: Returns the active bill of the mentioned table (if exists, else 404).
+            > If user is a superuser: Returns all bills of the mentioned table.
+        - If both bill_id and table_id are absent:
+            > If user is not a superuser: Returns HTTP 404
+            > If user is a superuser: Returns all bills.
         """
-        if table_id is not None:
-            # If table_id is present
-            table = get_object_or_404(Table, pk=table_id)
-            bill = table.bills.filter(active=True).first()
-            if bill is None:
-                raise Http404("No active bill exists for this table. Contact staff.")
-            bill_data = BillSerializer(bill).data
-            return Response(bill_data)
-        # If table_id is absent
         authorised = (
             request.user
             and request.user.is_authenticated
             and request.user.is_staff
             and request.user.is_superuser
         )
-        if not authorised:
-            # If table_id is absent and the user is not a superuser
-            raise PermissionDenied("Only admin can perform this action.")
-        if bill_id is None:
-            # If bill_id and table_id are absent and the user is a superuser
-            all_bills = Bill.objects.all()
-            all_bills_data = BillSerializer(all_bills, many=True).data
-            return Response(all_bills_data)
-        else:
-            # If table_id is absent but bill_id is present and the user is a superuser
-            print("hello")
+        if bill_id is not None:
+            if not authorised:
+                raise PermissionDenied("Only admin can perform this action.")
             bill = get_object_or_404(Bill, pk=bill_id)
             bill_data = BillSerializer(bill).data
             return Response(bill_data)
+
+        if table_id is not None:
+            # If table_id is present
+            table = get_object_or_404(Table, pk=table_id)
+
+            if (
+                authorised
+            ):  # If bill_id is absent, table_id is present and the user is a superuser.
+                table_bills = table.bills.all()
+                if table_bills is None:
+                    raise Http404("No bills exist for this table.")
+                table_bills_data = BillSerializer(table_bills, many=True).data
+                return Response(table_bills_data)
+
+            # If bill_id is present, table_id is absent and user is not a superuser.
+            bill_data = BillSerializer(bill).data
+            bill = table.bills.filter(active=True).first()
+            if bill is None:
+                raise Http404("No active bill exists for this table. Contact staff.")
+            bill_data = BillSerializer(bill).data
+            return Response(bill_data)
+        
+        if not authorised:
+            raise Http404("Table_id not found.")
+        
+        all_bills = Bill.objects.all()
+        all_bills_data = BillSerializer(all_bills, many=True).data
+        return Response(all_bills_data)
 
     def post(self, request, table_id):
         """
@@ -87,18 +102,25 @@ class BillView(APIView):
         new_bill_data = BillSerializer(new_bill).data
         return Response(new_bill_data, status=status.HTTP_201_CREATED)
 
-    def patch(self, request, table_id):
+    def patch(self, request, table_id=None, bill_id=None):
         """
-        Updates the active bill of the given table and returns updated bill data.
+        Updates the active bill of the given table/bill_id and returns updated bill data.
         """
-        table = get_object_or_404(Table, pk=table_id)
-        bill = table.bills.filter(active=True).order_by("-date").first()
+        if bill_id is not None:
+            if not (request.user.is_staff and request.user.is_superuser):
+                raise PermissionDenied("Only admin can perform this action.")
+            bill = get_object_or_404(Bill, pk=bill_id)
 
-        if bill is None:
-            raise Http404("No active bill at the given table.")
+        elif table_id is not None:
+            table = get_object_or_404(Table, pk=table_id)
+            bill = table.bills.filter(active=True).first()
+            if bill is None:
+                raise Http404("No active bill at the given table.")
+
+        else:
+            raise Http404("Table_id and bill_id not found.")
 
         update_bill = BillSerializer(bill, data=request.data, partial=True)
-
         update_bill.is_valid(raise_exception=True)
         update_bill.save()
         return Response(update_bill.data)

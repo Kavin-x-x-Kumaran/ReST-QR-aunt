@@ -8,8 +8,9 @@ from .routers import table_router
 from .views import BillView
 
 urlpatterns = [
-    path("", include(table_router.urls)),                       # For tables/: all: PUT, PATCH; admin: GET, POST, DELETE  
-    path("tables/<int:table_id>/bills/", BillView.as_view()),   # For get, patch, post
-    path("bills/", BillView.as_view()),                         # For get all (admin only)
-    path("bills/<int:bill_id>/", BillView.as_view()),           # For delete, get (admin only)
+    path("", include(table_router.urls)),                                       # For tables/: all: PUT, PATCH; admin: GET, POST, DELETE  
+    path("tables/<int:table_id>/bills/", BillView.as_view()),                   # all: GET(active), PATCH, POST; Admin: GET(all with table_id)
+    path("tables/<int:table_id>/bills/<int:bill_id>", BillView.as_view()),      # Admin: Get with bill_id
+    path("bills/", BillView.as_view()),                                         # Admin: GET(all)
+    path("bills/<int:bill_id>/", BillView.as_view()),                           # Admin: GET, PATCH, DELETE
 ]
