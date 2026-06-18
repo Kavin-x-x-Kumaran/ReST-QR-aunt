@@ -57,6 +57,7 @@ class ItemAdminView(generics.ListCreateAPIView, generics.RetrieveUpdateDestroyAP
     View which permits superusers to perform the following actions to items.
 
     Superusers can:
+    - Retrieve all Items.
     - Create a new Item.
     - Update any field of an existing Item.
     - Delete an existing Item.
