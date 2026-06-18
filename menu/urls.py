@@ -13,11 +13,13 @@ from .views import (
 )
 
 urlpatterns = [
-    path("categories/", CategoryListView.as_view()),
-    path("items/", ItemListView.as_view()),
-    path("kitchen/items/<int:pk>/", ItemStaffView.as_view()),
-    path("admin/categories/", CategoryAdminView.as_view()),
-    path("admin/categories/<int:pk>/", CategoryAdminView.as_view()),
-    path("admin/items/", ItemAdminView.as_view()),
-    path("admin/items/<int:pk>/", ItemAdminView.as_view()),
+    path("categories/", CategoryListView.as_view()),                        # all: GET(all)
+    path("categories/<int:pk>", CategoryListView.as_view()),                # all: GET
+    path("items/", ItemListView.as_view()),                                 # all: GET(all)
+    path("items/<int:pk>", ItemListView.as_view()),                         # all: GET
+    path("kitchen/items/<int:pk>/", ItemStaffView.as_view()),               # Staff and Admin: PATCH (only Availability)
+    path("admin/categories/", CategoryAdminView.as_view()),                 # Admin only: GET(all), POST
+    path("admin/categories/<int:pk>/", CategoryAdminView.as_view()),        # Admin only: GET, PATCH, PUT, 
+    path("admin/items/", ItemAdminView.as_view()),                          # Admin only: GET(all), POST
+    path("admin/items/<int:pk>/", ItemAdminView.as_view()),                 # Admin only: GET, PATCH, PUT, 
 ]

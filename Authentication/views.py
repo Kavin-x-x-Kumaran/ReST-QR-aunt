@@ -17,7 +17,7 @@ class UserView(ModelViewSet):
 
     Restricts access to superusers.
     """
-    
+
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsSuperUser]

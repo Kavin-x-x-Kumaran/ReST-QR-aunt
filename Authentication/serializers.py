@@ -22,7 +22,7 @@ class UserSerializer(ModelSerializer):
             "last_name",
             "is_staff",
             "is_active",
-            "date_joined"
+            "date_joined",
         ]
 
         extra_kwargs = {
@@ -38,7 +38,7 @@ class UserSerializer(ModelSerializer):
         user.save()
 
         return user
-            
+
     def update(self, instance, validated_data):
         """Update a user and hash the password if provided."""
         password = validated_data.pop("password", None)
@@ -51,4 +51,3 @@ class UserSerializer(ModelSerializer):
 
         instance.save()
         return instance
-    

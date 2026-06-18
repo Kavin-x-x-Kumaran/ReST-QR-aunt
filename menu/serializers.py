@@ -29,7 +29,7 @@ class ItemSerializer(ModelSerializer):
             "description",
             "price",
             "preparation_minutes",
-            "availability"
+            "availability",
         ]
 
 

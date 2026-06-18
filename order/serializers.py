@@ -21,5 +21,5 @@ class OrderPatchSerializer(ModelSerializer):
     """Serializer for PATCH method, allowing customers to edit only instructions and quantity."""
 
     class Meta:
-        model=Order
+        model = Order
         fields = ["id", "quantity", "instruction"]
