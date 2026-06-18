@@ -15,6 +15,7 @@ class Order(models.Model):
     """Represents an order given by any customer."""
 
     class Status(models.TextChoices):
+        """Defines choices for the status attribute."""
         ORDERING = "O", "Ordering"
         WAITING = "W", "Waiting"
         DELIVERED = "D", "Delivered"
