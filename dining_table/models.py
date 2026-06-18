@@ -1,5 +1,5 @@
 """
-Models available to customers seated at dining tables.
+Models representing customers seated at dining tables.
 
 Provides Table and Bill classes.
 """
