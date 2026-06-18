@@ -1,5 +1,5 @@
 """
-Permission for authentication.
+Permission for accessing menu functions.
 
 Provides permission classes restricted to superusers.
 """
