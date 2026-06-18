@@ -1,7 +1,7 @@
 """
-Routers for authentication.
+Routers used in dining_table.
 
-Provides router for the UserView class used for user authentication.
+Provides router for the TableView class.
 """
 
 from rest_framework.routers import DefaultRouter
