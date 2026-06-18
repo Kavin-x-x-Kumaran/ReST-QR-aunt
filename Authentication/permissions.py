@@ -1,7 +1,7 @@
 """
 Permission for authentication.
 
-Provides permission classes restricted to superusers.
+Provides IsSuperUser permission class.
 """
 
 from rest_framework.permissions import BasePermission
