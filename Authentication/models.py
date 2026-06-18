@@ -9,6 +9,7 @@ from django.db import models
 
 from dining_table.models import Table
 
+
 class User(AbstractUser):
     """
     Represents User in the system.
@@ -18,7 +19,7 @@ class User(AbstractUser):
 
     table = models.ForeignKey(
         Table,
-        on_delete=models.DO_NOTHING,
+        on_delete=models.CASCADE,
         null=True,
         blank=True,
     )
