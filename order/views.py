@@ -22,7 +22,6 @@ class OrderView(APIView):
     """Viewset for managing orders."""
 
     permission_classes = [IsAuthenticated]
-    #pagination_class = PageNumberPagination
 
     def get_order_based_on_permissions(self, request, order_id, table_id=None):
         """
@@ -43,46 +42,52 @@ class OrderView(APIView):
         """
         Returns Orders as JSON epending on the passed arguments.
 
-        - Raises HTTP 404 if an invalid order_id is passed as argument.
-        - Returns the requested order if a valid order_id is passed as argument.
-        - Raises HTTP 404 if an invalid table_id is passed as argument.
-        - Returns all the orders of the active bill of the passed table.
-        - Raises HTTP 404 if an invalid bill_id is passed as argument.
-        - Returns all orders of the mentioned bill corresponding to the passed valid bill_id.
-        - Raises HTTP 403 if a non-staff member attempts to access orders filtered by status.
-        - Raises HTTP 404 if an invalid status is passed as argument.
-        - Returns all orders of the mentioned valid status passed as argument when request is made by a member of staff.
-        - Raises HTTP 403 if a non-superuser attempts to access all orders.
-        - Returns all orders, If no arguments are passed if request is made by a superuser.
+        - If order_id is present:
+            > If order_id is valid: returns the required order.
+            > If order_id is invalid: raises HTTP 404.
+        - If order_id is absent and status is present:
+            > If the user is not staff: Raises HTTP 403.
+            > If the user is staff:
+                >> If status is invalid: Raises HTTP 404.
+                >> If status is valid: Returns all orders of passed status in a paginated manner.
+        - If order_id and status are absent and table_id is present:
+            > If table_id is invalid: Raises HTTP 404.
+            > If table_id is valid:
+                >> If that table has no active bill: Raises HTTP 404.
+                >> If table has an active bill: Returns all orders in that bill.
+        - If order_id, status, and table_id are absent and bill_id is present:
+            > If bill_id is invalid: raises HTTP 404.
+            > If bill_id is valid: returns all orders in the mentioned bill_id.
+        - If all parameters are absent:
+            > If user is a superuser: Returns all orders in a paginated manner.
+            > If user is not a superuser: Raises HTTP 403.
         """
         if order_id is not None:
             order = get_object_or_404(Order, pk=order_id)
             order_data = OrderSerializer(order).data
             return Response(order_data)
-
-        if table_id is not None:
-            table = get_object_or_404(Table, pk=table_id)
-            bill = table.bills.filter(active=True).first()
-            if bill is None:
-                raise Http404("No active bill exists for this table.")
-            bill_id = bill.id
-
-        if bill_id is not None:
-            bill = get_object_or_404(Bill, pk=bill_id)
-            orders = bill.orders.all()
-            orders_data = OrderSerializer(orders, many=True).data
-            return Response(orders_data)
-
+        
         if status is not None:
             if not request.user.is_staff:
                 raise PermissionDenied("This request is only available to staff.")
             if status.upper() not in ["O", "W", "D"]:
                 raise Http404("Invalid status entered.")
             status_orders = Order.objects.filter(status=status.upper())
-            if not status_orders.exists():
-                return Response("No orders left of this status.")
             status_orders_data = OrderSerializer(status_orders, many=True).data
             return Response(status_orders_data)
+
+        if table_id is not None:
+            table = get_object_or_404(Table, pk=table_id)
+            bill = table.bills.filter(active=True).first()
+            if bill is None:
+                raise Http404("No active bill exists for this table.")
+            bill_id = bill.pk
+
+        if bill_id is not None:
+            bill = get_object_or_404(Bill, pk=bill_id)
+            orders = bill.orders.all()
+            orders_data = OrderSerializer(orders, many=True).data
+            return Response(orders_data)
 
         if request.user.is_staff and request.user.is_superuser:
             all_orders = Order.objects.all()
