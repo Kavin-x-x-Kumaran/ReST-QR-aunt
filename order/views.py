@@ -7,7 +7,8 @@ Provides views for accommodating HTTP requests.
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from rest_framework import status
-from rest_framework.exceptions import PermissionDenied, ValidationError
+from rest_framework.exceptions import PermissionDenied
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -21,6 +22,7 @@ class OrderView(APIView):
     """Viewset for managing orders."""
 
     permission_classes = [IsAuthenticated]
+    #pagination_class = PageNumberPagination
 
     def get_order_based_on_permissions(self, request, order_id, table_id=None):
         """

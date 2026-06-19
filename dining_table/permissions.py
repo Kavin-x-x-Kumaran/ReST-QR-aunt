@@ -16,11 +16,17 @@ class IsAllowedAccess(BasePermission):
 
         GET, POST, DELETE are restricted to superusers. Other methods are open to all authenticated users.
         """
-        if view.action in ["list", "retrieve", "create", "destroy"]:
+        if view.action in ["create", "destroy"]:
             return (
                 request.user
                 and request.user.is_authenticated
                 and request.user.is_staff
                 and request.user.is_superuser
+            )
+        if view.action in ["list",]:
+            return(
+                request.user
+                and request.user.is_authenticated
+                and request.user.is_staff
             )
         return request.user.is_authenticated

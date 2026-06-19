@@ -7,6 +7,7 @@ Provides views for accommodating HTTP requests.
 from django.http import Http404
 from rest_framework import status
 from rest_framework.exceptions import PermissionDenied, ValidationError
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
@@ -34,6 +35,9 @@ class BillView(APIView):
     View for accessing bills.
     """
 
+    pagination_class = PageNumberPagination
+    PAGINATION_PAGE_SIZE = 10
+
     def get(self, request, table_id=None, bill_id=None):
         """
         - If bill_id is present:
@@ -46,6 +50,8 @@ class BillView(APIView):
             > If user is not a superuser: Returns HTTP 404
             > If user is a superuser: Returns all bills.
         """
+        paginator = self.pagination_class()
+        paginator.page_size = self.PAGINATION_PAGE_SIZE
         authorised = (
             request.user
             and request.user.is_authenticated
@@ -63,18 +69,18 @@ class BillView(APIView):
             # If table_id is present
             table = get_object_or_404(Table, pk=table_id)
 
-            if (
-                authorised
-            ):  # If bill_id is absent, table_id is present and the user is a superuser.
+            if (authorised):  
+                # If bill_id is absent, table_id is present and the user is a superuser.
                 table_bills = table.bills.all()
                 if table_bills is None:
                     raise Http404("No bills exist for this table.")
-                table_bills_data = BillSerializer(table_bills, many=True).data
-                return Response(table_bills_data)
+                result_page = paginator.paginate_queryset(table_bills, request)
+                table_bills_data = BillSerializer(result_page, many=True).data
+                return paginator.get_paginated_response(table_bills_data)
 
             # If bill_id is present, table_id is absent and user is not a superuser.
-            bill_data = BillSerializer(bill).data
             bill = table.bills.filter(active=True).first()
+            bill_data = BillSerializer(bill).data
             if bill is None:
                 raise Http404("No active bill exists for this table. Contact staff.")
             bill_data = BillSerializer(bill).data
@@ -84,8 +90,9 @@ class BillView(APIView):
             raise Http404("Table_id not found.")
         
         all_bills = Bill.objects.all()
-        all_bills_data = BillSerializer(all_bills, many=True).data
-        return Response(all_bills_data)
+        result_page = paginator.paginate_queryset(all_bills, request)
+        all_bills_data = BillSerializer(result_page, many=True).data
+        return paginator.get_paginated_response(all_bills_data)
 
     def post(self, request, table_id):
         """
