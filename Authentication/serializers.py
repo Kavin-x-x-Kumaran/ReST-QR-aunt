@@ -16,6 +16,7 @@ class UserSerializer(ModelSerializer):
         model = User
         fields = [
             "id",
+            "username",
             "password",
             "email",
             "first_name",
@@ -23,6 +24,7 @@ class UserSerializer(ModelSerializer):
             "is_staff",
             "is_active",
             "date_joined",
+            "table_id",
         ]
 
         extra_kwargs = {
