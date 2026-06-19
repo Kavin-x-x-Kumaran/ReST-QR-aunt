@@ -36,7 +36,7 @@ class BillView(APIView):
     """
 
     pagination_class = PageNumberPagination
-    PAGINATION_PAGE_SIZE = 10
+    PAGINATION_PAGE_SIZE = 100
 
     def get(self, request, table_id=None, bill_id=None):
         """
@@ -45,10 +45,10 @@ class BillView(APIView):
             > If user is a superuser: Returns the requested bill.
         - If bill_id is absent and table_id is present:
             > If user is not a superuser: Returns the active bill of the mentioned table (if exists, else 404).
-            > If user is a superuser: Returns all bills of the mentioned table.
+            > If user is a superuser: Returns all bills of the mentioned table in a paginated manner.
         - If both bill_id and table_id are absent:
             > If user is not a superuser: Returns HTTP 404
-            > If user is a superuser: Returns all bills.
+            > If user is a superuser: Returns all bills in a paginated manner.
         """
         paginator = self.pagination_class()
         paginator.page_size = self.PAGINATION_PAGE_SIZE
