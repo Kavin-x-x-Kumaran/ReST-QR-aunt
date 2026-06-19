@@ -74,8 +74,8 @@ class BillView(APIView):
                 table_bills = table.bills.all()
                 if table_bills is None:
                     raise Http404("No bills exist for this table.")
-                result_page = paginator.paginate_queryset(table_bills, request)
-                table_bills_data = BillSerializer(result_page, many=True).data
+                table_bills_page = paginator.paginate_queryset(table_bills, request)
+                table_bills_data = BillSerializer(table_bills_page, many=True).data
                 return paginator.get_paginated_response(table_bills_data)
 
             # If bill_id is present, table_id is absent and user is not a superuser.
