@@ -22,6 +22,8 @@ class OrderView(APIView):
     """Viewset for managing orders."""
 
     permission_classes = [IsAuthenticated]
+    pagination_class = PageNumberPagination
+    PAGINATION_PAGE_SIZE = 1
 
     def get_order_based_on_permissions(self, request, order_id, table_id=None):
         """
@@ -62,6 +64,9 @@ class OrderView(APIView):
             > If user is a superuser: Returns all orders in a paginated manner.
             > If user is not a superuser: Raises HTTP 403.
         """
+        paginator = self.pagination_class()
+        paginator.page_size = self.PAGINATION_PAGE_SIZE
+
         if order_id is not None:
             order = get_object_or_404(Order, pk=order_id)
             order_data = OrderSerializer(order).data
@@ -73,8 +78,9 @@ class OrderView(APIView):
             if status.upper() not in ["O", "W", "D"]:
                 raise Http404("Invalid status entered.")
             status_orders = Order.objects.filter(status=status.upper())
-            status_orders_data = OrderSerializer(status_orders, many=True).data
-            return Response(status_orders_data)
+            status_orders_page = paginator.paginate_queryset(status_orders, request)
+            status_orders_data = OrderSerializer(status_orders_page, many=True).data
+            return paginator.get_paginated_response(status_orders_data)
 
         if table_id is not None:
             table = get_object_or_404(Table, pk=table_id)
@@ -91,8 +97,10 @@ class OrderView(APIView):
 
         if request.user.is_staff and request.user.is_superuser:
             all_orders = Order.objects.all()
+            all_orders_page = paginator.paginate_queryset(all_orders, request)
+            all_orders_data = OrderSerializer(all_orders_page, many=True)
             all_orders_data = OrderSerializer(all_orders, many=True).data
-            return Response(all_orders_data)
+            return paginator.get_paginated_response(all_orders_data)
         else:
             raise PermissionDenied("This request is only available to Admin.")
 
