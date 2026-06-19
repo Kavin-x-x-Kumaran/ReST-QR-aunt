@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     "authentication",
     "dining_table",
     "menu",
+    "order",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
