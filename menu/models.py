@@ -23,7 +23,7 @@ class Item(models.Model):
 
     name = models.CharField(max_length=150)
     category = models.ForeignKey(
-        Category, on_delete=models.DO_NOTHING, related_name="items"
+        Category, on_delete=models.CASCADE, related_name="items"
     )
     description = models.TextField(blank=True)
     price = models.DecimalField(
