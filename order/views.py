@@ -23,7 +23,7 @@ class OrderView(APIView):
 
     permission_classes = [IsAuthenticated]
     pagination_class = PageNumberPagination
-    PAGINATION_PAGE_SIZE = 1
+    PAGINATION_PAGE_SIZE = 10
 
     def get_order_based_on_permissions(self, request, order_id, table_id=None):
         """
