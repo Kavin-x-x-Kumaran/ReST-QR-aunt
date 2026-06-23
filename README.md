@@ -39,17 +39,7 @@ An app that takes care of ordering and billing.
     python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
     ```
 2. This is your django_secret_key. Copy it for the next step.
-3. Next, enter the following details, replacing the terms enclosed in angular brackets [`<>`]:
-    ```
-    DJANGO_SECRET_KEY=<your_secret_key>
-    DEBUG=False
-    ALLOWED_HOSTS='["<frontend.url1>", "<frontend.url2>"]'
-    DB_NAME=<name_of_your_database>
-    DB_USER=postgres
-    DB_PASSWORD=<your_postgres_password>
-    DB_HOST=<url/ip_of_database_server>>
-    DB_PORT=<port_where_database_is_listening>
-    ```
+3. Copy the contents of `.env.sample` onto your newly created `.env` file.
 4. In the terminal, run: `python manage.py runserver`
 5. Your server is now running!
 
@@ -57,11 +47,9 @@ An app that takes care of ordering and billing.
 
 ```
 /
-├── admin/                                              Django Admin
-│
 ├── auth/
-│   ├── token/                              POST        Obtain JWT token pair   (all)
-│   ├── refresh/                            POST        Refresh JWT token       (all)
+│   ├── token/                              POST        Obtain JWT token pair
+│   ├── refresh/                            POST        Refresh JWT token
 │   └── users/
 │       ├──                                 GET         List users              (admin)
 │       ├──                                 POST        Create user             (admin)
@@ -98,38 +86,36 @@ An app that takes care of ordering and billing.
 │       ├──                                 PATCH       Update bill             (admin)
 │       ├──                                 DELETE      Delete bill             (admin)
 │       └── orders/
-│           ├──                             ALL         List all orders in bill (admin)
-│           ├──                             ALL         Create order in bill    (admin)
+│           ├──                             GET         List orders in bill     (staff)
+│           ├──                             POST        Create order in bill    (staff)
 │           └── <order_id>/
-│               ├──                         ALL         Retrieve order          (admin)
-│               ├──                         ALL         Update order            (admin)
-│               └──                         ALL         Delete order            (admin)
+│               ├──                         GET         Retrieve order          (staff)
+│               ├──                         POST        Update order            (staff)
+│               └──                         DELETE      Delete order            (staff)
 │
 ├── categories/
 │   ├──                                     GET         List categories         (all)
-│   └── <pk>
+│   └── <pk>/
 │       └──                                 GET         Retrieve category       (all)
 │
 ├── items/
 │   ├──                                     GET         List items              (all)
-│   └── <pk>
+│   └── <pk>/
 │       └──                                 GET         Retrieve item           (all)
 │
 ├── kitchen/
-│   ├── items/<pk>/
-│   │   └──                                 PATCH       Update availability     (staff)
-│   └── orders/<status>
-│       └──                                 PATCH       Update order status     (staff)
+│   └── items/<pk>/
+│       └──                                 PATCH       Update availability     (staff)
 │
 ├── orders/
-│   ├──                                     GET         List all orders         (admin)
-│   ├──                                     POST        Create order            (admin)
+│   ├──                                     GET         List all orders         (staff)
+│   ├──                                     POST        Create order            (staff)
 │   ├── status/<status>/
-│   │   └──                                 GET         Filter by status        (admin)
-│   └── <order_id>
-│       ├──                                 GET         Retrieve order          (admin)
-│       ├──                                 PATCH       Update order            (admin)
-│       └──                                 DELETE      Delete order            (admin)
+│   │   └──                                 GET         Filter by status        (staff)
+│   └── <order_id>/
+│       ├──                                 GET         Retrieve order          (staff)
+│       ├──                                 PATCH       Update order            (staff)
+│       └──                                 DELETE      Delete order            (staff)
 │
 └── admin/
     ├── categories/
