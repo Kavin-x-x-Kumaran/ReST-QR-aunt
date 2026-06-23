@@ -6,6 +6,7 @@ Provides views for accommodating HTTP requests.
 
 from rest_framework import generics
 from rest_framework.permissions import IsAdminUser
+from rest_framework.viewsets import ModelViewSet
 
 from .models import Category, Item
 from .permissions import IsSuperUser
@@ -24,27 +25,14 @@ class CategoryListView(generics.ListAPIView, generics.RetrieveAPIView):
         return self.list(request, *args, **kwargs)
 
 
-class CategoryAdminView(
-    generics.ListCreateAPIView, generics.RetrieveUpdateDestroyAPIView
-):
+class CategoryAdminView(ModelViewSet):
     """
-    View which permits superusers to perform the following actions to categories.
-
-    Superusers can:
-    - Create a new Category.
-    - Update an existing Category.
-    - Delete an existing Category.
-    - Retrieve a particular Category.
+    View which permits superusers to create, retrieve, list, update, and delete Categories.
     """
 
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = [IsSuperUser]
-
-    def get(self, request, *args, **kwargs):
-        if "pk" in kwargs.keys():
-            return self.retrieve(request, *args, **kwargs)
-        return self.list(request, *args, **kwargs)
 
 
 class ItemListView(generics.ListAPIView, generics.RetrieveAPIView):
@@ -67,23 +55,11 @@ class ItemStaffView(generics.UpdateAPIView):
     permission_classes = [IsAdminUser]
 
 
-class ItemAdminView(generics.ListCreateAPIView, generics.RetrieveUpdateDestroyAPIView):
+class ItemAdminView(ModelViewSet):
     """
-    View which permits superusers to perform the following actions to items.
-
-    Superusers can:
-    - Retrieve all Items.
-    - Create a new Item.
-    - Update any field of an existing Item.
-    - Delete an existing Item.
-    - Retrieve a particular Item.
+    View which permits superusers to create, retrieve, list, update, and delete Items.
     """
 
     queryset = Item.objects.all()
     serializer_class = ItemSerializer
     permission_classes = [IsSuperUser]
-
-    def get(self, request, *args, **kwargs):
-        if "pk" in kwargs.keys():
-            return self.retrieve(request, *args, **kwargs)
-        return self.list(request, *args, **kwargs)
