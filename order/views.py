@@ -15,7 +15,7 @@ from rest_framework.views import APIView
 
 from dining_table.models import Table, Bill
 from .models import Order
-from .serializers import OrderSerializer, OrderPatchSerializer
+from .serializers import OrderSerializer, OrderCustomerSerializer
 
 
 class OrderView(APIView):
@@ -132,7 +132,10 @@ class OrderView(APIView):
     def patch(self, request, order_id, table_id=None):
         """Edits an existing order and returns the edited version."""
         order = self.get_order_based_on_permissions(request, order_id, table_id)
-        update_order = OrderPatchSerializer(order, data=request.data, partial=True)
+        if not request.user.is_staff:
+            update_order = OrderCustomerSerializer(order, data=request.data, partial=True)
+        else:
+            update_order = OrderSerializer(order, data=request.data, partial=True)
         update_order.is_valid(raise_exception=True)
         if update_order.validated_data.get("quantity") == 0:
             return self.delete(request, order_id)

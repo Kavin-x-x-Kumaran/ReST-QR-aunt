@@ -17,7 +17,7 @@ class OrderSerializer(ModelSerializer):
         fields = ["id", "item", "quantity", "instruction", "time", "status", "bill"]
 
 
-class OrderPatchSerializer(ModelSerializer):
+class OrderCustomerSerializer(ModelSerializer):
     """Serializer for PATCH method, allowing customers to edit only instructions and quantity."""
 
     class Meta:
