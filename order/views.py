@@ -31,7 +31,7 @@ class OrderView(APIView):
 
         Used by patch() and delete()
         """
-        if request.user.is_superuser and request.user.is_staff:
+        if request.user.is_staff:
             return get_object_or_404(Order, pk=order_id)
         if table_id is None:
             raise Http404("table_id not found.")
@@ -104,7 +104,7 @@ class OrderView(APIView):
         else:
             raise PermissionDenied("This request is only available to Admin.")
 
-    def post(self, request, table_id=None):
+    def post(self, request, table_id=None, bill_id=None):
         """Creates a new order and returns the created order as a JSON."""
         data = request.data.copy()
         if table_id is not None:
@@ -120,6 +120,9 @@ class OrderView(APIView):
 
         elif not (request.user.is_staff and request.user.is_superuser):
             raise PermissionDenied("This request is only available to Admin.")
+        
+        else:
+            data["bill"] = bill_id
 
         serializer = OrderSerializer(data=data)
         serializer.is_valid(raise_exception=True)
