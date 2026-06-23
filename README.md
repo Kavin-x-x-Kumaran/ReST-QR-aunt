@@ -1,4 +1,4 @@
-![Logo](logo.png)
+![Logo](docs/logo.png)
 # ReST-QR-aunt
 A Django REST-Framework API that streamlines restaurant order-giving process by delivering orders directly to the kitchen, reducing the workload on waiters.
 
@@ -19,7 +19,7 @@ An app that takes care of ordering and billing.
 ## From GitHub
 1. Open the terminal. Run the following commands.
 2. Clone the repository onto your server: `git clone https://github.com/Kavin-x-x-Kumaran/ReST-QR-aunt`
-3. Move into the project folder: `cd REST-QR-AUNT`
+3. Move into the project folder: `cd "ReST-QR-aunt"`
 4. Install requirements in a virtual environment: 
     ```
     python -m venv .venv
@@ -32,8 +32,6 @@ An app that takes care of ordering and billing.
 6. The app has been installed! Move to initialisation.
 
 ## Using Docker
-
-## Using Huggingface
 
 # Initialisation
 1. Run the following command to generate your secret key:
