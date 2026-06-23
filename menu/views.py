@@ -18,6 +18,11 @@ class CategoryListView(generics.ListAPIView, generics.RetrieveAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
 
+    def get(self, request, *args, **kwargs):
+        if "pk" in kwargs.keys():
+            return self.retrieve(request, *args, **kwargs)
+        return self.list(request, *args, **kwargs)
+
 
 class CategoryAdminView(
     generics.ListCreateAPIView, generics.RetrieveUpdateDestroyAPIView
@@ -36,12 +41,22 @@ class CategoryAdminView(
     serializer_class = CategorySerializer
     permission_classes = [IsSuperUser]
 
+    def get(self, request, *args, **kwargs):
+        if "pk" in kwargs.keys():
+            return self.retrieve(request, *args, **kwargs)
+        return self.list(request, *args, **kwargs)
+
 
 class ItemListView(generics.ListAPIView, generics.RetrieveAPIView):
     """View which permits all users to view the list of items."""
 
     queryset = Item.objects.all()
     serializer_class = ItemSerializer
+
+    def get(self, request, *args, **kwargs):
+        if "pk" in kwargs.keys():
+            return self.retrieve(request, *args, **kwargs)
+        return self.list(request, *args, **kwargs)
 
 
 class ItemStaffView(generics.UpdateAPIView):
@@ -67,3 +82,8 @@ class ItemAdminView(generics.ListCreateAPIView, generics.RetrieveUpdateDestroyAP
     queryset = Item.objects.all()
     serializer_class = ItemSerializer
     permission_classes = [IsSuperUser]
+
+    def get(self, request, *args, **kwargs):
+        if "pk" in kwargs.keys():
+            return self.retrieve(request, *args, **kwargs)
+        return self.list(request, *args, **kwargs)
