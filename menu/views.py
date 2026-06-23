@@ -12,7 +12,7 @@ from .permissions import IsSuperUser
 from .serializers import AvailabilitySerializer, CategorySerializer, ItemSerializer
 
 
-class CategoryListView(generics.ListCreateAPIView, generics.RetrieveAPIView):
+class CategoryListView(generics.ListAPIView, generics.RetrieveAPIView):
     """View which permits all users to view the list of categories."""
 
     queryset = Category.objects.all()
