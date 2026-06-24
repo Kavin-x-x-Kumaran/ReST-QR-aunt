@@ -14,6 +14,7 @@ class Base(models.Model):
     """
 
     public_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    deleted_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         abstract = True
