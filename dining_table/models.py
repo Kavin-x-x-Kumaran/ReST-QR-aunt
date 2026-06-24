@@ -6,8 +6,10 @@ Provides Table and Bill classes.
 
 from django.db import models
 
+from REST_QR_aunt.models import Base
 
-class Table(models.Model):
+
+class Table(Base):
     """Represents a dining table which seats customers."""
 
     class Status(models.TextChoices):
@@ -26,7 +28,7 @@ class Table(models.Model):
         return f"Table no. {self.pk}"
 
 
-class Bill(models.Model):
+class Bill(Base):
     """Represents a bill generated in a visit."""
 
     table = models.ForeignKey(Table, on_delete=models.DO_NOTHING, related_name="bills")

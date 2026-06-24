@@ -8,9 +8,10 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 from dining_table.models import Table
+from REST_QR_aunt.models import Base
 
 
-class User(AbstractUser):
+class User(Base, AbstractUser):
     """
     Represents User in the system.
 
@@ -23,3 +24,6 @@ class User(AbstractUser):
         null=True,
         blank=True,
     )
+
+    class Meta(AbstractUser.Meta):
+        pass

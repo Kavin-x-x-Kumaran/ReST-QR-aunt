@@ -9,9 +9,10 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 
 from dining_table.models import Bill
 from menu.models import Item
+from REST_QR_aunt.models import Base
 
 
-class Order(models.Model):
+class Order(Base):
     """Represents an order given by any customer."""
 
     class Status(models.TextChoices):

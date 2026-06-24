@@ -7,8 +7,9 @@ Provides Category and Item classes.
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 
+from REST_QR_aunt.models import Base
 
-class Category(models.Model):
+class Category(Base):
     """Represents a category of food item."""
 
     name = models.CharField(max_length=50)
@@ -18,7 +19,7 @@ class Category(models.Model):
         return self.name
 
 
-class Item(models.Model):
+class Item(Base):
     """Represents a food item."""
 
     name = models.CharField(max_length=150)
