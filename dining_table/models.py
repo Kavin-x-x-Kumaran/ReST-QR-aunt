@@ -6,10 +6,10 @@ Provides Table and Bill classes.
 
 from django.db import models
 
-from REST_QR_aunt.models import Base
+from REST_QR_aunt.models import SoftDeleteModel
 
 
-class Table(Base):
+class Table(SoftDeleteModel):
     """Represents a dining table which seats customers."""
 
     class Status(models.TextChoices):
@@ -25,10 +25,12 @@ class Table(Base):
 
     def __str__(self):
         """Return a human-readable identifier."""
-        return f"Table no. {self.pk}"
+        if not self.is_deleted:
+            return f"Table no. {self.pk}"
+        return super().__str__()
 
 
-class Bill(Base):
+class Bill(SoftDeleteModel):
     """Represents a bill generated in a visit."""
 
     table = models.ForeignKey(Table, on_delete=models.DO_NOTHING, related_name="bills")
@@ -37,4 +39,6 @@ class Bill(Base):
 
     def __str__(self):
         """Return a human-readable identifier."""
-        return f"Bill no. {self.pk} from {self.date}"
+        if not self.is_deleted:
+            return f"Bill no. {self.pk} from {self.date}"
+        return super().__str__()

@@ -8,10 +8,10 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 from dining_table.models import Table
-from REST_QR_aunt.models import Base
+from REST_QR_aunt.models import SoftDeleteModel
 
 
-class User(Base, AbstractUser):
+class User(SoftDeleteModel, AbstractUser):
     """
     Represents User in the system.
 
@@ -27,7 +27,10 @@ class User(Base, AbstractUser):
 
     def __str__(self):
         """Return a human-readable identifier."""
-        return self.username
+        if not self.is_deleted:
+            return f"User: {self.username}"
+        else:
+            return super().__str__()
 
     class Meta(AbstractUser.Meta):
         pass

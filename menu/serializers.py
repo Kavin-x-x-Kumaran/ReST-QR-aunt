@@ -30,6 +30,7 @@ class ItemSerializer(ModelSerializer):
             "price",
             "preparation_minutes",
             "availability",
+            "deleted_at",
         ]
 
 

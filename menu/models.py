@@ -7,19 +7,22 @@ Provides Category and Item classes.
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 
-from REST_QR_aunt.models import Base
+from REST_QR_aunt.models import SoftDeleteModel
 
-class Category(Base):
+class Category(SoftDeleteModel):
     """Represents a category of food item."""
 
     name = models.CharField(max_length=50)
 
     def __str__(self):
         """Return category name"""
-        return self.name
+        if not self.is_deleted:
+            return self.name
+        else:
+            return super().__str__()
 
 
-class Item(Base):
+class Item(SoftDeleteModel):
     """Represents a food item."""
 
     name = models.CharField(max_length=150)
@@ -37,4 +40,7 @@ class Item(Base):
 
     def __str__(self):
         """Return a human-readable identifier."""
-        return f"{self.category.name}: {self.name}"
+        if not self.is_deleted:
+            return f"{self.category.name}: {self.name}"
+        else:
+            return super().__str__()
