@@ -17,3 +17,7 @@ class Base(models.Model):
 
     class Meta:
         abstract = True
+
+    def __str__(self):
+        """Return a human-readable identifier."""
+        return f"Database entry: {self.public_id}"

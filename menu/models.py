@@ -34,3 +34,7 @@ class Item(Base):
         blank=True, validators=[MaxValueValidator(60)]
     )
     availability = models.BooleanField(default=True)
+
+    def __str__(self):
+        """Return a human-readable identifier."""
+        return f"{self.category.name}: {self.name}"

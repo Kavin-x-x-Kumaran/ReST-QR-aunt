@@ -29,3 +29,7 @@ class Order(Base):
     time = models.DateTimeField(auto_now=True)
     status = models.CharField(max_length=1, choices=Status.choices, default="O")
     bill = models.ForeignKey(Bill, on_delete=models.CASCADE, related_name="orders")
+
+    def __str__(self):
+        """Return a human-readable identifier."""
+        return f"Order no.: `{self.pk}"

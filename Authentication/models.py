@@ -25,5 +25,9 @@ class User(Base, AbstractUser):
         blank=True,
     )
 
+    def __str__(self):
+        """Return a human-readable identifier."""
+        return self.username
+
     class Meta(AbstractUser.Meta):
         pass
