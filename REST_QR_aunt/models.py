@@ -51,3 +51,4 @@ class SoftDeleteModel(Base):
     def delete(self):
         self.is_deleted = True
         self.deleted_at = timezone.now()
+        self.save()
