@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "rest_framework_simplejwt",
+    "rest_framework_simplejwt.token_blacklist",
 ]
 
 MIDDLEWARE = [
@@ -122,9 +123,9 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(hours=1),
-    "REFRESH_TOKEN_LIFETIME": timedelta(hours=8),
-    "ROTATE_REFRESH_TOKEN": True,
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes = 15, hours=24 if DEBUG else 0),
+    "REFRESH_TOKEN_LIFETIME": timedelta(hours=24 if DEBUG else 8),
+    "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
 }
 
