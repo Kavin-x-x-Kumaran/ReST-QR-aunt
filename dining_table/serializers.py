@@ -14,7 +14,7 @@ class TableSerializer(ModelSerializer):
 
     class Meta:
         model = Table
-        fields = ["id", "occupied", "status", "deleted_at"]
+        fields = ["id", "occupied", "status"]
 
 
 class BillSerializer(ModelSerializer):
@@ -22,4 +22,4 @@ class BillSerializer(ModelSerializer):
 
     class Meta:
         model = Bill
-        fields = ["id", "table", "active", "date", "deleted_at"]
+        fields = ["id", "table", "active", "date"]

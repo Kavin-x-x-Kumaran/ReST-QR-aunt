@@ -22,7 +22,6 @@ class OrderSerializer(ModelSerializer):
             "time",
             "status",
             "bill",
-            "deleted_at",
         ]
 
 

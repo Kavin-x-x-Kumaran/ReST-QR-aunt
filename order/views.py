@@ -71,7 +71,7 @@ class OrderView(APIView):
             order = get_object_or_404(Order, pk=order_id)
             order_data = OrderSerializer(order).data
             return Response(order_data)
-        
+
         if status is not None:
             if not request.user.is_staff:
                 raise PermissionDenied("This request is only available to staff.")
@@ -120,7 +120,7 @@ class OrderView(APIView):
 
         elif not (request.user.is_staff and request.user.is_superuser):
             raise PermissionDenied("This request is only available to Admin.")
-        
+
         else:
             data["bill"] = bill_id
 
@@ -133,7 +133,9 @@ class OrderView(APIView):
         """Edits an existing order and returns the edited version."""
         order = self.get_order_based_on_permissions(request, order_id, table_id)
         if not request.user.is_staff:
-            update_order = OrderCustomerSerializer(order, data=request.data, partial=True)
+            update_order = OrderCustomerSerializer(
+                order, data=request.data, partial=True
+            )
         else:
             update_order = OrderSerializer(order, data=request.data, partial=True)
         update_order.is_valid(raise_exception=True)
@@ -146,4 +148,4 @@ class OrderView(APIView):
         """Deletes the mentioned order."""
         order = self.get_order_based_on_permissions(request, order_id, table_id)
         order.delete()
-        return Response(status=status.HTTP_204)
+        return Response(status=status.HTTP_204_NO_CONTENT)

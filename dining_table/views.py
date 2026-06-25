@@ -69,7 +69,7 @@ class BillView(APIView):
             # If table_id is present
             table = get_object_or_404(Table, pk=table_id)
 
-            if (authorised):  
+            if authorised:
                 # If bill_id is absent, table_id is present and the user is a superuser.
                 table_bills = table.bills.all()
                 if table_bills is None:
@@ -85,10 +85,10 @@ class BillView(APIView):
                 raise Http404("No active bill exists for this table. Contact staff.")
             bill_data = BillSerializer(bill).data
             return Response(bill_data)
-        
+
         if not authorised:
             raise Http404("Table_id not found.")
-        
+
         all_bills = Bill.objects.all()
         result_page = paginator.paginate_queryset(all_bills, request)
         all_bills_data = BillSerializer(result_page, many=True).data
@@ -145,6 +145,6 @@ class BillView(APIView):
         if authorised:
             bill = get_object_or_404(Bill, pk=bill_id)
             bill.delete()
-            return Response(status=status.HTTP_204)
+            return Response(status=status.HTTP_204_NO_CONTENT)
         else:
             raise PermissionDenied("Only admin can perform this action.")

@@ -25,7 +25,6 @@ class UserSerializer(ModelSerializer):
             "is_active",
             "date_joined",
             "table",
-            "deleted_at",
         ]
 
         extra_kwargs = {
