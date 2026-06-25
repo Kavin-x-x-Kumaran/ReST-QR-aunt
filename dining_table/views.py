@@ -68,7 +68,7 @@ class BillTableViewSet(
     """
     Viewset for accessing bills associated with a table.
 
-    Gives heightened access to superusers.
+    Grants heightened access to superusers.
     """
 
     serializer_class = BillSerializer
