@@ -29,6 +29,7 @@ DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 
 ALLOWED_HOSTS = eval(os.getenv("ALLOWED_HOSTS", []))
 
+PAGINATION_PAGE_SIZE = 100
 
 # Application definition
 
