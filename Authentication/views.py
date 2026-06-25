@@ -6,8 +6,8 @@ Provides views for accommodating HTTP requests.
 
 from rest_framework.viewsets import ModelViewSet
 
+from REST_QR_aunt.permissions import IsSuperUser
 from .models import User
-from .permissions import IsSuperUser
 from .serializers import UserSerializer
 
 
