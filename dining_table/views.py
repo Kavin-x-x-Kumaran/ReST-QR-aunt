@@ -4,21 +4,22 @@ Views for dining tables, and bills.
 Provides views for accommodating HTTP requests.
 """
 
-from django.http import Http404
 from rest_framework import status
-from rest_framework.exceptions import PermissionDenied, ValidationError
-from rest_framework.pagination import PageNumberPagination
+from rest_framework.exceptions import ParseError, PermissionDenied, ValidationError
+from rest_framework.mixins import ListModelMixin, RetrieveModelMixin, UpdateModelMixin
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
-from rest_framework.views import APIView
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
+from REST_QR_aunt.pagination import DefaultPageNumberPagination
+from REST_QR_aunt.permissions import IsSuperUser
 from .models import Bill, Table
 from .permissions import IsAllowedAccess
 from .serializers import BillSerializer, TableSerializer
 
 
-class TableView(ModelViewSet):
+class TableViewSet(ModelViewSet):
     """
     Viewset for managing tables.
 
@@ -28,123 +29,92 @@ class TableView(ModelViewSet):
     queryset = Table.objects.all()
     serializer_class = TableSerializer
     permission_classes = [IsAllowedAccess]
+    lookup_field = "public_id"
 
 
-class BillView(APIView):
+class BillAdminViewSet(ModelViewSet):
     """
-    View for accessing bills.
+    Viewset for managing bills.
+
+    Restricts access to superusers.
     """
 
-    pagination_class = PageNumberPagination
-    PAGINATION_PAGE_SIZE = 100
+    queryset = Bill.objects.all()
+    serializer_class = BillSerializer
+    permssion_classes = [IsSuperUser]
+    pagination_class = DefaultPageNumberPagination
+    lookup_field = "public_id"
 
-    def get(self, request, table_id=None, bill_id=None):
+    def create(self, request, *args, **kwargs):
         """
-        - If bill_id is present:
-            > If user is not a superuser: Raises HTTP 403
-            > If user is a superuser: Returns the requested bill.
-        - If bill_id is absent and table_id is present:
-            > If user is not a superuser: Returns the active bill of the mentioned table (if exists, else 404).
-            > If user is a superuser: Returns all bills of the mentioned table in a paginated manner.
-        - If both bill_id and table_id are absent:
-            > If user is not a superuser: Returns HTTP 404
-            > If user is a superuser: Returns all bills in a paginated manner.
+        Create a Bill instance.
         """
-        paginator = self.pagination_class()
-        paginator.page_size = self.PAGINATION_PAGE_SIZE
-        authorised = (
-            request.user
-            and request.user.is_authenticated
-            and request.user.is_staff
-            and request.user.is_superuser
-        )
-        if bill_id is not None:
-            if not authorised:
-                raise PermissionDenied("Only admin can perform this action.")
-            bill = get_object_or_404(Bill, pk=bill_id)
-            bill_data = BillSerializer(bill).data
-            return Response(bill_data)
-
-        if table_id is not None:
-            # If table_id is present
-            table = get_object_or_404(Table, pk=table_id)
-
-            if authorised:
-                # If bill_id is absent, table_id is present and the user is a superuser.
-                table_bills = table.bills.all()
-                if table_bills is None:
-                    raise Http404("No bills exist for this table.")
-                table_bills_page = paginator.paginate_queryset(table_bills, request)
-                table_bills_data = BillSerializer(table_bills_page, many=True).data
-                return paginator.get_paginated_response(table_bills_data)
-
-            # If bill_id is present, table_id is absent and user is not a superuser.
-            bill = table.bills.filter(active=True).first()
-            bill_data = BillSerializer(bill).data
-            if bill is None:
-                raise Http404("No active bill exists for this table. Contact staff.")
-            bill_data = BillSerializer(bill).data
-            return Response(bill_data)
-
-        if not authorised:
-            raise Http404("Table_id not found.")
-
-        all_bills = Bill.objects.all()
-        result_page = paginator.paginate_queryset(all_bills, request)
-        all_bills_data = BillSerializer(result_page, many=True).data
-        return paginator.get_paginated_response(all_bills_data)
-
-    def post(self, request, table_id):
-        """
-        Function to create new bills.
-        """
-        table = get_object_or_404(Table, pk=table_id)
+        table = request.data.get("table")
+        if table is None:
+            raise ParseError("'tabe' field required.")
         if table.bills.filter(active=True).exists():
             raise ValidationError(
                 "No bill created. There already exists a bill at this table. Contact staff."
             )
-
-        new_bill = Bill(table=table, active=True)
+        new_bill = Bill(table=table, active=request.data("active", True))
         new_bill.save()
-        new_bill_data = BillSerializer(new_bill).data
+        new_bill_data = self.get_serializer(new_bill).data
         return Response(new_bill_data, status=status.HTTP_201_CREATED)
 
-    def patch(self, request, table_id=None, bill_id=None):
-        """
-        Updates the active bill of the given table/bill_id and returns updated bill data.
-        """
-        if bill_id is not None:
-            if not (request.user.is_staff and request.user.is_superuser):
-                raise PermissionDenied("Only admin can perform this action.")
-            bill = get_object_or_404(Bill, pk=bill_id)
 
-        elif table_id is not None:
-            table = get_object_or_404(Table, pk=table_id)
-            bill = table.bills.filter(active=True).first()
-            if bill is None:
-                raise Http404("No active bill at the given table.")
+class BillTableViewSet(
+    GenericViewSet, ListModelMixin, RetrieveModelMixin, UpdateModelMixin
+):
+    """
+    Viewset for accessing bills associated with a table.
 
-        else:
-            raise Http404("Table_id and bill_id not found.")
+    Gives heightened access to superusers.
+    """
 
-        update_bill = BillSerializer(bill, data=request.data, partial=True)
-        update_bill.is_valid(raise_exception=True)
-        update_bill.save()
-        return Response(update_bill.data)
+    serializer_class = BillSerializer
+    permission_classes = [IsAuthenticated]
+    pagination_class = DefaultPageNumberPagination
 
-    def delete(self, request, bill_id):
+    def get_table(self):
+        return get_object_or_404(Table, public_id=self.kwargs["table_pk"])
+
+    def create(self, request, *args, **kwargs):
         """
-        Deletes the mentioned bill_id.
+        Create a Bill instance.
+
+        If user is not a superuser (is a customer) they can only create a bill for their own table.
         """
-        authorised = (
-            request.user
-            and request.user.is_authenticated
-            and request.user.is_staff
-            and request.user.is_superuser
-        )
-        if authorised:
-            bill = get_object_or_404(Bill, pk=bill_id)
-            bill.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        else:
-            raise PermissionDenied("Only admin can perform this action.")
+        table = self.get_table()
+        if table.bills.filter(active=True).exists():
+            raise ValidationError(
+                "No bill created. There already exists a bill at this table. Contact staff."
+            )
+        if not request.user.is_superuser:
+            if table != self.request.user.table:
+                raise PermissionDenied(
+                    "You cannot create a bill for someone else's table."
+                )
+        new_bill = Bill(table=table, active=True)
+        new_bill.save()
+        new_bill_data = self.get_serializer(new_bill).data
+        return Response(new_bill_data, status=status.HTTP_201_CREATED)
+
+    def get_queryset(self):
+        """
+        Returns queryset containing the bills associated with the required table.
+
+        If the user is not a superuser (is a customer), it returns only the active
+        bills, after validating whether they are requesting their own table's bill.
+        """
+        table = self.get_table()
+        if self.request.user.is_superuser:
+            return table.bills.all()
+        if table == self.request.user.table:
+            return table.bills.filter(active=True)
+        raise PermissionDenied("You cannot view someone else's bill.")
+
+    def update(self, request, *args, **kwargs):
+        """Returns ModelViewSet.update() if user is a superuser and raises HTTP 403 otherwise."""
+        if request.user.is_superuser:
+            return super().update(request, *args, **kwargs)
+        raise PermissionDenied("You cannot perform this function.")

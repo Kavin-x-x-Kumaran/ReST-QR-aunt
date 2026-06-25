@@ -2,22 +2,18 @@
 URL configuration for dining_table app.
 """
 
-from django.urls import path, include
+from rest_framework_nested import routers
+from rest_framework.routers import DefaultRouter
 
-from .views import BillView, TableView
+from .views import BillAdminViewSet, BillTableViewSet, TableViewSet
 
-urlpatterns = [
-    path(
-        "tables/<int:pk>/",                                                     # all: PATCH; admin: GET, DELETE
-        TableView.as_view(
-            actions=({"get": "retrieve", "patch": "update", "delete": "destroy"})
-        ),
-    ),
-    path(                                                                       # admin: GET, POST
-        "tables/", TableView.as_view(actions=({"get":"list", "post":"create"}))
-    ),
-    path("tables/<int:table_id>/bills/", BillView.as_view()),                   # all: GET(active), PATCH, POST; Admin: GET(all with table_id)
-    path("tables/<int:table_id>/bills/<int:bill_id>", BillView.as_view()),      # Admin: Get with bill_id
-    path("bills/", BillView.as_view()),                                         # Admin: GET(all)
-    path("bills/<int:bill_id>/", BillView.as_view()),                           # Admin: GET, PATCH, DELETE
-]
+urlpatterns = []
+
+router = DefaultRouter()
+router.register(r'tables', TableViewSet)
+router.register(r'bills', BillAdminViewSet)
+urlpatterns += router.urls
+
+table_bill_router = routers.NestedDefaultRouter(router, "tables", lookup="table")
+table_bill_router.register(r'bills', BillTableViewSet, basename="table-bills")
+urlpatterns += table_bill_router.urls
