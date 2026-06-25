@@ -1,7 +1,7 @@
 """
-Permission for accessing menu functions.
+Common permission classes for all apps.
 
-Provides permission classes restricted to superusers.
+Provides IsSuperUser permission class.
 """
 
 from rest_framework.permissions import BasePermission
