@@ -12,5 +12,5 @@ from .views import OrderViewSet
 
 urlpatterns = []
 router = DefaultRouter()
-router.register(r"orders", OrderViewSet)
+router.register(r"", OrderViewSet, basename="orders")
 urlpatterns += router.urls
