@@ -4,7 +4,7 @@ Common permission classes for all apps.
 Provides IsSuperUser permission class.
 """
 
-from rest_framework.permissions import BasePermission
+from rest_framework.permissions import IsAdminUser, BasePermission
 
 
 class IsSuperUser(BasePermission):
@@ -18,3 +18,13 @@ class IsSuperUser(BasePermission):
             and request.user.is_staff
             and request.user.is_superuser
         )
+
+
+class IsStaffUser(IsAdminUser):
+    """
+    Permission class for kitchen staff.
+
+    Inherits from IsAdminUser.
+    Solely to retain clarity.
+    """
+    pass

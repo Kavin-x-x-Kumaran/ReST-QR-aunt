@@ -13,9 +13,8 @@ from django.shortcuts import get_object_or_404
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
 from REST_QR_aunt.pagination import DefaultPageNumberPagination
-from REST_QR_aunt.permissions import IsSuperUser
+from REST_QR_aunt.permissions import IsStaffUser, IsSuperUser
 from .models import Bill, Table
-from .permissions import IsAllowedAccess
 from .serializers import BillSerializer, TableSerializer
 
 
@@ -23,13 +22,21 @@ class TableViewSet(ModelViewSet):
     """
     Viewset for managing tables.
 
-    Restricts access to based on IsAllowedAccess permission class.
+    Restricts access to based on action performed.
     """
 
     queryset = Table.objects.all()
     serializer_class = TableSerializer
-    permission_classes = [IsAllowedAccess]
     lookup_field = "public_id"
+
+    def get_permissions(self):
+        if self.action == "list":
+            permission_classes = [IsStaffUser]
+        elif self.action in ["create", "destroy"]:
+            permission_classes = [IsSuperUser]
+        else:
+            permission_classes = [IsAuthenticated]
+        return [permission() for permission in permission_classes]
 
 
 class BillAdminViewSet(ModelViewSet):

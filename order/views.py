@@ -5,10 +5,11 @@ Provides views for accommodating HTTP requests.
 """
 
 from rest_framework.exceptions import PermissionDenied
-from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
 from REST_QR_aunt.pagination import DefaultPageNumberPagination
+from REST_QR_aunt.permissions import IsStaffUser
 from .models import Order
 from .serializers import (
     OrderSerializer,
@@ -21,7 +22,7 @@ class OrderViewSet(ModelViewSet):
     """Viewset for managing orders for Admin and kitchen staff."""
 
     queryset = Order.objects.all()
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsStaffUser]
     pagination_class = DefaultPageNumberPagination
     lookup_field = "public_id"
 

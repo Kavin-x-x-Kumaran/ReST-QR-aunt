@@ -4,10 +4,10 @@ Views for menu categories and items.
 Provides views for accommodating HTTP requests.
 """
 
-from rest_framework.permissions import AllowAny, IsAdminUser
+from rest_framework.permissions import AllowAny
 from rest_framework.viewsets import ModelViewSet
 
-from REST_QR_aunt.permissions import IsSuperUser
+from REST_QR_aunt.permissions import IsStaffUser, IsSuperUser
 from .models import Category, Item
 from .serializers import CategorySerializer, ItemSerializer, ItemAvailabilitySerializer
 
@@ -57,7 +57,7 @@ class ItemViewSet(ModelViewSet):
         if self.action in ["list", "retrieve"]:
             permission_classes = [AllowAny]
         elif self.action == "partial_update":
-            permission_classes = [IsAdminUser]
+            permission_classes = [IsStaffUser]
         else:
             permission_classes = [IsSuperUser]
         return [permission() for permission in permission_classes]
