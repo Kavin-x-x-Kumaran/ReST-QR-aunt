@@ -4,6 +4,7 @@ Views for orders.
 Provides views for accommodating HTTP requests.
 """
 
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
@@ -34,10 +35,15 @@ class OrderViewSet(ModelViewSet):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        status = self.request.get("status")
-        if status is not none:
+        status = self.request.query_params.get("status")
+        if status is not None:
             queryset = queryset.filter(status=status)
         return queryset
+    
+    def create(self, request, *args, **kwargs):
+        if not request.user.is_superuser:
+            raise PermissionDenied("You cannot create a new order.")
+        return super().create(request, *args, **kwargs)
 
 
 class OrderTableViewSet(ModelViewSet):
@@ -47,3 +53,8 @@ class OrderTableViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = OrderCustomerSerializer
     lookup_field = "public_id"
+
+    def create(self, request, *args, **kwargs):
+        if request.user.is_staff and not request.user.is_superuser:
+            raise PermissionDenied("You cannot create a new order.")
+        return super().create(request, *args, **kwargs)
