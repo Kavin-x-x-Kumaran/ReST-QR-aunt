@@ -21,3 +21,4 @@ class UserView(ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsSuperUser]
+    lookup_field = "public_id"
