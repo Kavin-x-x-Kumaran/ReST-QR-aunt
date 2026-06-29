@@ -14,7 +14,7 @@ class CategorySerializer(ModelSerializer):
 
     class Meta:
         model = Category
-        fields = ["id", "name"]
+        fields = ["public_id", "id", "name"]
 
 
 class ItemSerializer(ModelSerializer):
@@ -23,6 +23,7 @@ class ItemSerializer(ModelSerializer):
     class Meta:
         model = Item
         fields = [
+            "public_id", 
             "id",
             "category",
             "name",
@@ -38,4 +39,4 @@ class ItemAvailabilitySerializer(ModelSerializer):
 
     class Meta:
         model = Item
-        fields = ["id", "availability"]
+        fields = ["public_id", "id", "availability"]

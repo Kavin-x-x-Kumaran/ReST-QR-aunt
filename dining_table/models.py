@@ -40,5 +40,5 @@ class Bill(SoftDeleteModel):
     def __str__(self):
         """Return a human-readable identifier."""
         if not self.is_deleted:
-            return f"Bill no. {self.pk} from {self.date}"
+            return f"Bill no. {self.public_id} from {self.date}"
         return super().__str__()

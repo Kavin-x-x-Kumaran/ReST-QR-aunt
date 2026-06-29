@@ -14,7 +14,8 @@ class TableSerializer(ModelSerializer):
 
     class Meta:
         model = Table
-        fields = ["id", "occupied", "status"]
+        fields = ["public_id", "id", "occupied", "status"]
+        read_only_fields = ["public_id", "id"]
 
 
 class BillSerializer(ModelSerializer):
@@ -22,4 +23,5 @@ class BillSerializer(ModelSerializer):
 
     class Meta:
         model = Bill
-        fields = ["id", "table", "active", "date"]
+        fields = ["public_id", "id", "table", "active", "date"]
+        read_only_fields = ["public_id", "id"]

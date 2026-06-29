@@ -16,6 +16,7 @@ class OrderSerializer(ModelSerializer):
     class Meta:
         model = Order
         fields = [
+            "public_id",
             "id",
             "item",
             "quantity",
@@ -29,13 +30,13 @@ class OrderSerializer(ModelSerializer):
 class OrderCustomerSerializer(ModelSerializer):
     """
     Serializer for Order objects, allowing customers to edit only instructions and quantity.
-    
+
     Field "time" updates automatically for each update.
     """
 
     class Meta(OrderSerializer.Meta):
-        read_only_fields = ["id", "item", "time", "status", "bill"]
-    
+        read_only_fields = ["public_id", "id", "item", "time", "status", "bill"]
+
     def update(self, instance, validated_data):
         validated_data["time"] = timezone.now()
         return super().update(instance, validated_data)
@@ -46,6 +47,7 @@ class OrderKitchenSerializer(ModelSerializer):
 
     class Meta(OrderSerializer.Meta):
         read_only_fields = [
+            "public_id",
             "id",
             "item",
             "quantity",

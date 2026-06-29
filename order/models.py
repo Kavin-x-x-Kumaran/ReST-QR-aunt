@@ -32,4 +32,4 @@ class Order(Base):
 
     def __str__(self):
         """Return a human-readable identifier."""
-        return f"Order no.: `{self.pk}"
+        return f"Order no.: `{self.public_id}"

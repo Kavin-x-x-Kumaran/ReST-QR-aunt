@@ -76,7 +76,7 @@ class BillTableViewSet(
     pagination_class = DefaultPageNumberPagination
 
     def get_table(self):
-        return get_object_or_404(Table, public_id=self.kwargs["table_pk"])
+        return get_object_or_404(Table, public_id=self.kwargs["table_public_id"])
 
     def create(self, request, *args, **kwargs):
         """
