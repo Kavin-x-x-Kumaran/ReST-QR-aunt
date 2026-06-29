@@ -45,99 +45,90 @@ An app that takes care of ordering and billing.
 
 # API Endpoints Tree
 
+# API Endpoints Tree
+
 ```
 /
 ├── auth/
 │   ├── token/                              POST        Obtain JWT token pair
 │   ├── refresh/                            POST        Refresh JWT token
 │   └── users/
-│       ├──                                 GET         List users              (admin)
-│       ├──                                 POST        Create user             (admin)
-│       └── <pk>/
-│           ├──                             GET         Retrieve user           (admin)
-│           ├──                             PUT/PATCH   Update user             (admin)
-│           └──                             DELETE      Delete user             (admin)
+│       ├──                                 GET         List users              (superuser)
+│       ├──                                 POST        Create user             (superuser)
+│       └── <public_id>/
+│           ├──                             GET         Retrieve user           (superuser)
+│           ├──                             PUT/PATCH   Update user             (superuser)
+│           └──                             DELETE      Delete user             (superuser)
 │
 ├── tables/
-│   ├──                                     GET         List tables             (admin)
-│   ├──                                     POST        Create table            (admin)
-│   └── <pk>/
-│       ├──                                 GET         Retrieve table          (admin)
-│       ├──                                 PATCH       Update table            (authenticated)
-│       ├──                                 DELETE      Delete table            (admin)
+│   ├──                                     GET         List tables             (staff)
+│   ├──                                     POST        Create table            (superuser)
+│   └── <public_id>/
+│       ├──                                 GET         Retrieve table          (authenticated)
+│       ├──                                 PUT/PATCH   Update table            (authenticated)
+│       ├──                                 DELETE      Delete table            (superuser)
 │       ├── bills/
-│       │   ├──                             GET         Active bill             (non-admin)
-│       │   ├──                             GET         All bills by table      (admin)
-│       │   ├──                             POST        Create bill             (authenticated)
-│       │   ├──                             PATCH       Update active bill      (non-admin)
-│       │   └── <bill_id>
-│       │       └──                         GET         Bill by ID+table        (admin)
+│       │   ├──                             GET         List bills              (authenticated; own table active only / superuser gets all)
+│       │   ├──                             POST        Create bill             (authenticated; own table only / superuser any)
+│       │   └── <public_id>/
+│       │       ├──                         GET         Retrieve bill           (authenticated; own table only)
+│       │       └──                         PUT/PATCH   Update bill             (superuser)
 │       └── orders/
-│           ├──                             GET         List orders             (customer)
-│           ├──                             POST        Create order            (customer)
-│           └── <order_id>/
-│               ├──                         PATCH       Update order            (customer)
-│               └──                         DELETE      Delete order            (customer)
+│           ├──                             GET         List orders             (authenticated)
+│           ├──                             POST        Create order            (authenticated; not staff-only)
+│           └── <public_id>/
+│               ├──                         GET         Retrieve order          (authenticated)
+│               ├──                         PUT/PATCH   Update order            (authenticated)
+│               └──                         DELETE      Delete order            (authenticated)
 │
 ├── bills/
-│   ├──                                     GET         List all bills          (admin)
-│   └── <bill_id>/
-│       ├──                                 GET         Retrieve bill           (admin)
-│       ├──                                 PATCH       Update bill             (admin)
-│       ├──                                 DELETE      Delete bill             (admin)
+│   ├──                                     GET         List all bills          (superuser)
+│   ├──                                     POST        Create bill             (superuser)
+│   └── <public_id>/
+│       ├──                                 GET         Retrieve bill           (superuser)
+│       ├──                                 PUT/PATCH   Update bill             (superuser)
+│       ├──                                 DELETE      Delete bill             (superuser)
 │       └── orders/
 │           ├──                             GET         List orders in bill     (staff)
-│           ├──                             POST        Create order in bill    (staff)
-│           └── <order_id>/
+│           ├──                             POST        Create order in bill    (superuser)
+│           └── <public_id>/
 │               ├──                         GET         Retrieve order          (staff)
-│               ├──                         POST        Update order            (staff)
+│               ├──                         PUT/PATCH   Update order            (staff)
 │               └──                         DELETE      Delete order            (staff)
 │
-├── categories/
-│   ├──                                     GET         List categories         (all)
-│   └── <pk>/
-│       └──                                 GET         Retrieve category       (all)
+├── menu/
+│   ├── categories/
+│   │   ├──                                 GET         List categories         (all)
+│   │   ├──                                 POST        Create category         (superuser)
+│   │   └── <public_id>/
+│   │       ├──                             GET         Retrieve category       (all)
+│   │       ├──                             PUT/PATCH   Update category         (superuser)
+│   │       └──                             DELETE      Delete category         (superuser)
+│   └── items/
+│       ├──                                 GET         List items              (all)
+│       ├──                                 POST        Create item             (superuser)
+│       └── <public_id>/
+│           ├──                             GET         Retrieve item           (all)
+│           ├──                             PATCH       Update availability     (staff)
+│           ├──                             PUT         Full update item        (superuser)
+│           └──                             DELETE      Delete item             (superuser)
 │
-├── items/
-│   ├──                                     GET         List items              (all)
-│   └── <pk>/
-│       └──                                 GET         Retrieve item           (all)
-│
-├── kitchen/
-│   └── items/<pk>/
-│       └──                                 PATCH       Update availability     (staff)
-│
-├── orders/
-│   ├──                                     GET         List all orders         (staff)
-│   ├──                                     POST        Create order            (staff)
-│   ├── status/<status>/
-│   │   └──                                 GET         Filter by status        (staff)
-│   └── <order_id>/
-│       ├──                                 GET         Retrieve order          (staff)
-│       ├──                                 PATCH       Update order            (staff)
-│       └──                                 DELETE      Delete order            (staff)
-│
-└── admin/
-    ├── categories/
-    │   ├──                                 GET         List categories         (admin)
-    │   ├──                                 POST        Create category         (admin)
-    │   └── <pk>/
-    │       ├──                             GET         Retrieve category       (admin)
-    │       └──                             PUT/PATCH   Update category         (admin)
-    └── items/
-        ├──                                 GET         List items              (admin)
-        ├──                                 POST        Create item             (admin)
-        └── <pk>/
-            ├──                             GET         Retrieve item           (admin)
-            └──                             PUT/PATCH   Update item             (admin)
+└── orders/
+    ├──                                     GET         List all orders         (staff)
+    ├──                                     POST        Create order            (superuser)
+    └── <public_id>/
+        ├──                                 GET         Retrieve order          (staff)
+        ├──                                 PUT/PATCH   Update order            (staff)
+        └──                                 DELETE      Delete order            (staff)
 ```
+## Note: 
+`orders/` supports `?status=<status>` query param for filtering.
 
 ## Access Levels
 
-|    Level      | Description              |
-|---------------|--------------------------|
-|     all       | Any user                 |
-| authenticated | Any authenticated user   |
-|   customer    | Customer (table-scoped)  |
-|    staff      | Kitchen staff and Admin  |
-|    admin      | Admin only               |
+|    Level      | Description                                         |
+|---------------|-----------------------------------------------------|
+|     all       | Any user, including unauthenticated                 |
+| authenticated | Any authenticated user (IsAuthenticated)            |
+|    staff      | is_staff=True — includes superusers (IsStaffUser)   |
+|   superuser   | is_superuser=True (IsSuperUser)                     |
