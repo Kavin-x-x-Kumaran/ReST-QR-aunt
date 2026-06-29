@@ -4,7 +4,6 @@ Views for menu categories and items.
 Provides views for accommodating HTTP requests.
 """
 
-from rest_framework import generics
 from rest_framework.permissions import IsAdminUser
 from rest_framework.viewsets import ModelViewSet
 
