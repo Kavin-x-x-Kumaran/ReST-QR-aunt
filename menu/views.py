@@ -4,7 +4,7 @@ Views for menu categories and items.
 Provides views for accommodating HTTP requests.
 """
 
-from rest_framework.permissions import IsAdminUser
+from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.viewsets import ModelViewSet
 
 from REST_QR_aunt.permissions import IsSuperUser
@@ -25,7 +25,7 @@ class CategoryViewSet(ModelViewSet):
 
     def get_permissions(self):
         if self.action in ["list", "retrieve"]:
-            permission_classes = self.permission_classes
+            permission_classes = [AllowAny]
         else:
             permission_classes = [IsSuperUser]
         return [permission() for permission in permission_classes]
@@ -55,8 +55,8 @@ class ItemViewSet(ModelViewSet):
         depending on the incoming request.
         """
         if self.action in ["list", "retrieve"]:
-            permission_classes = self.permission_classes
-        if self.action == "partial_update":
+            permission_classes = [AllowAny]
+        elif self.action == "partial_update":
             permission_classes = [IsAdminUser]
         else:
             permission_classes = [IsSuperUser]
