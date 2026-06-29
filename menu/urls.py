@@ -9,6 +9,6 @@ from .views import CategoryViewSet, ItemViewSet
 urlpatterns = []
 
 router = DefaultRouter()
-router.register(r'categories', CategoryViewSet)
-router.register(r'items', ItemViewSet)
+router.register(r"categories", CategoryViewSet)
+router.register(r"items", ItemViewSet)
 urlpatterns += router.urls
