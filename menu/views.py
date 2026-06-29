@@ -10,56 +10,55 @@ from rest_framework.viewsets import ModelViewSet
 
 from REST_QR_aunt.permissions import IsSuperUser
 from .models import Category, Item
-from .serializers import AvailabilitySerializer, CategorySerializer, ItemSerializer
+from .serializers import CategorySerializer, ItemSerializer, ItemAvailabilitySerializer
 
 
-class CategoryListView(generics.ListAPIView, generics.RetrieveAPIView):
-    """View which permits all users to view the list of categories."""
-
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
-
-    def get(self, request, *args, **kwargs):
-        if "pk" in kwargs.keys():
-            return self.retrieve(request, *args, **kwargs)
-        return self.list(request, *args, **kwargs)
-
-
-class CategoryAdminView(ModelViewSet):
+class CategoryViewSet(ModelViewSet):
     """
-    View which permits superusers to create, retrieve, list, update, and delete Categories.
+    Viewset for accessing Categories.
+
+    Grants heightened access to superusers.
     """
 
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = [IsSuperUser]
+    lookup_field = "public_id"
+
+    def get_permissions(self):
+        if self.action in ["list", "retrieve"]:
+            permission_classes = self.permission_classes
+        else:
+            permission_classes = [IsSuperUser]
+        return [permission() for permission in permission_classes]
 
 
-class ItemListView(generics.ListAPIView, generics.RetrieveAPIView):
-    """View which permits all users to view the list of items."""
-
-    queryset = Item.objects.all()
-    serializer_class = ItemSerializer
-
-    def get(self, request, *args, **kwargs):
-        if "pk" in kwargs.keys():
-            return self.retrieve(request, *args, **kwargs)
-        return self.list(request, *args, **kwargs)
-
-
-class ItemStaffView(generics.UpdateAPIView):
-    """View which permits only staff to update availability of an Item."""
-
-    queryset = Item.objects.all()
-    serializer_class = AvailabilitySerializer
-    permission_classes = [IsAdminUser]
-
-
-class ItemAdminView(ModelViewSet):
+class ItemViewSet(ModelViewSet):
     """
-    View which permits superusers to create, retrieve, list, update, and delete Items.
+    Viewset for accessing Items.
+
+    Grants heightened access to superusers.
     """
 
     queryset = Item.objects.all()
-    serializer_class = ItemSerializer
-    permission_classes = [IsSuperUser]
+    lookup_field = "public_id"
+
+    def get_serializer_class(self, *args, **kwargs):
+        """
+        Return the class to use for the serializer depending on the incoming request.
+        """
+        if self.action == "partial_update" and not self.request.user.is_superuser:
+            return ItemAvailabilitySerializer
+        return ItemSerializer
+
+    def get_permissions(self):
+        """
+        Instantiates and returns the list of permissions that this view requires
+        depending on the incoming request.
+        """
+        if self.action in ["list", "retrieve"]:
+            permission_classes = self.permission_classes
+        if self.action == "partial_update":
+            permission_classes = [IsAdminUser]
+        else:
+            permission_classes = [IsSuperUser]
+        return [permission() for permission in permission_classes]

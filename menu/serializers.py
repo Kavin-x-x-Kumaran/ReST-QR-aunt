@@ -33,7 +33,7 @@ class ItemSerializer(ModelSerializer):
         ]
 
 
-class AvailabilitySerializer(ModelSerializer):
+class ItemAvailabilitySerializer(ModelSerializer):
     """Serializer for availability field of Item objects."""
 
     class Meta:
