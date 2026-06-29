@@ -4,13 +4,14 @@ Serializers for order.
 Provides serializers for Order.
 """
 
+from django.utils import timezone
 from rest_framework.serializers import ModelSerializer
 
 from .models import Order
 
 
 class OrderSerializer(ModelSerializer):
-    """Serializer for Model objects."""
+    """Serializer for Order objects."""
 
     class Meta:
         model = Order
@@ -26,8 +27,29 @@ class OrderSerializer(ModelSerializer):
 
 
 class OrderCustomerSerializer(ModelSerializer):
-    """Serializer for PATCH method, allowing customers to edit only instructions and quantity."""
+    """
+    Serializer for Order objects, allowing customers to edit only instructions and quantity.
+    
+    Field "time" updates automatically for each update.
+    """
 
-    class Meta:
-        model = Order
-        fields = ["id", "quantity", "instruction", "deleted_at"]
+    class Meta(OrderSerializer.Meta):
+        read_only_fields = ["id", "item", "time", "status", "bill"]
+    
+    def update(self, instance, validated_data):
+        validated_data["time"] = timezone.now()
+        return super().update(instance, validated_data)
+
+
+class OrderKitchenSerializer(ModelSerializer):
+    """Serializer for Order objects, allowing kitchen staff to edit only status."""
+
+    class Meta(OrderSerializer.Meta):
+        read_only_fields = [
+            "id",
+            "item",
+            "quantity",
+            "instruction",
+            "time",
+            "bill",
+        ]
