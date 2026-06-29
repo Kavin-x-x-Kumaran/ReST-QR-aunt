@@ -4,7 +4,7 @@ Views for orders.
 Provides views for accommodating HTTP requests.
 """
 
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
@@ -58,4 +58,9 @@ class OrderTableViewSet(ModelViewSet):
     def create(self, request, *args, **kwargs):
         if request.user.is_staff and not request.user.is_superuser:
             raise PermissionDenied("You cannot create a new order.")
+        item = request.data.get("item")
+        if item is None:
+            raise ValidationError("Invalid input: item is a required field.")
+        if item.availability == False:
+            raise ValidationError(f"Invalid input: cannot order {item.name} as it is currently unavailable.")
         return super().create(request, *args, **kwargs)

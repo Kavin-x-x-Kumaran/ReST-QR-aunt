@@ -5,6 +5,7 @@ Provides User class as a child of AbstractUser with optional attribute table_id
 """
 
 from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import ValidationError
 from django.db import models
 
 from dining_table.models import Table
@@ -34,3 +35,14 @@ class User(SoftDeleteModel, AbstractUser):
 
     class Meta(AbstractUser.Meta):
         pass
+
+    def clean(self):
+        if self.is_staff or self.is_superuser:
+            if self.table is not None:
+                raise ValidationError("Staff user cannot have an associated table.")
+        if self.table is None:
+            raise ValidationError("Table user must have a valid table associated with it.")
+    
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
