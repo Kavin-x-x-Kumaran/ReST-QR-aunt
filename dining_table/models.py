@@ -5,6 +5,7 @@ Provides Table and Bill classes.
 """
 
 from django.db import models
+from django.db.models import Q
 
 from REST_QR_aunt.models import SoftDeleteModel
 
@@ -42,3 +43,12 @@ class Bill(SoftDeleteModel):
         if not self.is_deleted:
             return f"Bill no. {self.public_id} from {self.date}"
         return super().__str__()
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["table"],
+                condition=Q(active=True),
+                name="unique_active_bill_per_table",
+            )
+        ]
