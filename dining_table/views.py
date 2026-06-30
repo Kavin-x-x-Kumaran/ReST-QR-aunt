@@ -59,7 +59,7 @@ class BillAdminViewSet(ModelViewSet):
         table_id = request.data.get("table")
         if table_id is None:
             raise ParseError("'table' field required.")
-        table = get_object_or_404(Table, table_id)
+        table = get_object_or_404(Table, pk=table_id)
         if table.bills.filter(active=True).exists():
             raise ValidationError(
                 "No bill created. There already exists a bill at this table. Contact staff."
