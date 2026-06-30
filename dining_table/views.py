@@ -64,7 +64,7 @@ class BillAdminViewSet(ModelViewSet):
             raise ValidationError(
                 "No bill created. There already exists a bill at this table. Contact staff."
             )
-        new_bill = Bill(table=table, active=request.data("active", True))
+        new_bill = Bill(table=table, active=request.data.get("active", True))
         new_bill.save()
         new_bill_data = self.get_serializer(new_bill).data
         return Response(new_bill_data, status=status.HTTP_201_CREATED)
