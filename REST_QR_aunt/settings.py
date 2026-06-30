@@ -27,7 +27,7 @@ if SECRET_KEY is None:
 
 DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 
-ALLOWED_HOSTS = eval(os.getenv("ALLOWED_HOSTS", []))
+ALLOWED_HOSTS = (os.getenv("ALLOWED_HOSTS", "")).split(' ')
 
 PAGINATION_PAGE_SIZE = 100
 
