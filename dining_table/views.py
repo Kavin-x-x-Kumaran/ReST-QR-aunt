@@ -48,7 +48,7 @@ class BillAdminViewSet(ModelViewSet):
 
     queryset = Bill.objects.all()
     serializer_class = BillSerializer
-    permssion_classes = [IsSuperUser]
+    permission_classes = [IsSuperUser]
     pagination_class = DefaultPageNumberPagination
     lookup_field = "public_id"
 
