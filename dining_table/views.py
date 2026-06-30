@@ -103,7 +103,6 @@ class BillTableViewSet(
                 )
         new_bill = Bill(table=table, active=True)
         new_bill.save()
-        table.
         new_bill_data = self.get_serializer(new_bill).data
         return Response(new_bill_data, status=status.HTTP_201_CREATED)
 
