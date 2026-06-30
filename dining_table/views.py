@@ -123,6 +123,5 @@ class BillTableViewSet(
     def update(self, request, *args, **kwargs):
         """Returns ModelViewSet.update() if user is a superuser and raises HTTP 403 otherwise."""
         if request.user.is_superuser:
-            update_table_occupied()
             return super().update(request, *args, **kwargs)
         raise PermissionDenied("You cannot perform this function.")
