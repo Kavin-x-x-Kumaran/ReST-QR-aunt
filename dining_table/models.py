@@ -32,7 +32,7 @@ class Table(SoftDeleteModel):
         return super().__str__()
 
     def clean(self):
-        if self.bills.filter(active=True).exists():
+        if self.pk and self.bills.filter(active=True).exists():
             if not self.occupied:
                 raise ValidationError("An unoccupied table cannot have an active bill.")
             if self.status is None:
