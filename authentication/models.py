@@ -10,6 +10,7 @@ from django.db import models
 
 from dining_table.models import Table
 from REST_QR_aunt.models import SoftDeleteModel
+from .managers import CustomUserManager
 
 
 class User(SoftDeleteModel, AbstractUser):
@@ -18,7 +19,8 @@ class User(SoftDeleteModel, AbstractUser):
 
     Users with is_staff=False represent dining tables and have a corresponding table_id
     """
-
+    
+    objects = CustomUserManager()
     table = models.ForeignKey(
         Table,
         on_delete=models.CASCADE,
@@ -40,7 +42,7 @@ class User(SoftDeleteModel, AbstractUser):
         if self.is_staff or self.is_superuser:
             if self.table is not None:
                 raise ValidationError("Staff user cannot have an associated table.")
-        if self.table is None:
+        elif self.table is None:
             raise ValidationError("Table user must have a valid table associated with it.")
     
     def save(self, *args, **kwargs):
